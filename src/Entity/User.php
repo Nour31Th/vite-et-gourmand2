@@ -67,10 +67,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Avis::class, mappedBy: 'utilisateur')]
     private Collection $avis;
 
+    /**
+     * @var Collection<int, ResetPasswordToken>
+     */
+    #[ORM\OneToMany(targetEntity: ResetPasswordToken::class, mappedBy: 'utilisateur')]
+    private Collection $resetPasswordTokens;
+
     public function __construct()
     {
         $this->commandes = new ArrayCollection();
         $this->avis = new ArrayCollection();
+        $this->resetPasswordTokens = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -286,6 +293,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($avi->getUtilisateur() === $this) {
                 $avi->setUtilisateur(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ResetPasswordToken>
+     */
+    public function getResetPasswordTokens(): Collection
+    {
+        return $this->resetPasswordTokens;
+    }
+
+    public function addResetPasswordToken(ResetPasswordToken $resetPasswordToken): static
+    {
+        if (!$this->resetPasswordTokens->contains($resetPasswordToken)) {
+            $this->resetPasswordTokens->add($resetPasswordToken);
+            $resetPasswordToken->setUtilisateur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeResetPasswordToken(ResetPasswordToken $resetPasswordToken): static
+    {
+        if ($this->resetPasswordTokens->removeElement($resetPasswordToken)) {
+            // set the owning side to null (unless already changed)
+            if ($resetPasswordToken->getUtilisateur() === $this) {
+                $resetPasswordToken->setUtilisateur(null);
             }
         }
 
