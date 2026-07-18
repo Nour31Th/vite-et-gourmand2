@@ -61,6 +61,9 @@ class Commande
     #[ORM\Column]
     private ?bool $materiel_restitue = null;
 
+    #[ORM\OneToOne(mappedBy: 'commande', cascade: ['persist', 'remove'])]
+    private ?Avis $avis = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -242,6 +245,23 @@ class Commande
     public function setMaterielRestitue(bool $materiel_restitue): static
     {
         $this->materiel_restitue = $materiel_restitue;
+
+        return $this;
+    }
+
+    public function getAvis(): ?Avis
+    {
+        return $this->avis;
+    }
+
+    public function setAvis(Avis $avis): static
+    {
+        // set the owning side of the relation if necessary
+        if ($avis->getCommande() !== $this) {
+            $avis->setCommande($this);
+        }
+
+        $this->avis = $avis;
 
         return $this;
     }
