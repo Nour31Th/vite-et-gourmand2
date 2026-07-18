@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\CommandeRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -63,6 +65,17 @@ class Commande
 
     #[ORM\OneToOne(mappedBy: 'commande', cascade: ['persist', 'remove'])]
     private ?Avis $avis = null;
+
+    /**
+     * @var Collection<int, HistoriqueStatut>
+     */
+    #[ORM\OneToMany(targetEntity: HistoriqueStatut::class, mappedBy: 'commande')]
+    private Collection $historiqueStatuts;
+
+    public function __construct()
+    {
+        $this->historiqueStatuts = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -262,6 +275,36 @@ class Commande
         }
 
         $this->avis = $avis;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, HistoriqueStatut>
+     */
+    public function getHistoriqueStatuts(): Collection
+    {
+        return $this->historiqueStatuts;
+    }
+
+    public function addHistoriqueStatut(HistoriqueStatut $historiqueStatut): static
+    {
+        if (!$this->historiqueStatuts->contains($historiqueStatut)) {
+            $this->historiqueStatuts->add($historiqueStatut);
+            $historiqueStatut->setCommande($this);
+        }
+
+        return $this;
+    }
+
+    public function removeHistoriqueStatut(HistoriqueStatut $historiqueStatut): static
+    {
+        if ($this->historiqueStatuts->removeElement($historiqueStatut)) {
+            // set the owning side to null (unless already changed)
+            if ($historiqueStatut->getCommande() === $this) {
+                $historiqueStatut->setCommande(null);
+            }
+        }
 
         return $this;
     }
