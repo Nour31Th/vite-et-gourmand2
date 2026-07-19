@@ -1,43 +1,60 @@
 security:
-    # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
+    # Hash mot de passe, définition de l'algorithme de hachage pour les mots de passe 
     password_hashers:
-        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
+        App\Entity\User:
+            algorithm: bcrypt     #bcrypt = algo recommandé car sécurisé et lent donc résistant face aux attaques par force brute
 
-    # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
+
+    # Indique à Symfony comment charger les utilisateurs à partir de la base de données (ici Doctrine BDD PostgreSQL) + identifiant = email de l'utilisateur
     providers:
-        # used to reload user from session & other features (e.g. switch_user)
         app_user_provider:
             entity:
-                class: App\Entity\User
-                property: email
+                class: App\Entity\User  #L'entité User de mon projet
+                property: email        #Champ utilisé comme identifiant, ici l'email        
 
+
+    #Firewall= Pare-feux, définit règles de sécurité pour chaque partie de l'appli, outils de devppmnt Symfony
     firewalls:
         dev:
-            # Ensure dev tools and static assets are always allowed
-            pattern: ^/(_profiler|_wdt|assets|build)/
+            #barre de debug, profiler, assets CSS/JS, route accessibles sans authentification
+            pattern: ^/(_profiler|_wdt|css|images|js)/ 
             security: false
+        
+        #pare-feu principal qui gère tte l'appli
         main:
-            lazy: true
-            provider: app_user_provider
+            lazy: true                         #Charge l'utilisateur uniquement si nécessaire
+            provider: app_user_provider        #Utilise le provider défini au-dessus 
 
-            # Activate different ways to authenticate:
-            # https://symfony.com/doc/current/security.html#the-firewall
+            # configuration du formulaire de login
+            form_login:
+                login_path: app_login           #Route qui affiche le formulaire (GET)
+                check_path: app_login           #Route qui traite le formulaire (POST)
+                enable_csrf: true                #Protection contre les attaques CSRF sur le formulaire de login
+                default_target_path: app_redirect_after_login  #Route qui gère la redirection après login selon le rôle de l'utilisateur
+            
+            # configuration de la déconnexion 
+            logout:
+               path: app_logout
+               target: app_home                  #Route redirection après déconnexion (ici page d'accueil)
+                
 
-            # https://symfony.com/doc/current/security/impersonating_user.html
-            # switch_user: true
+    # Hiérarchie des rôles : rôle ROLE_ADMIN hérite de ROLE_EMPLOYE et donc ROLE_USER, ROLE_EMPLOYE hérite de ROLE_USER.
+    # Amdin peut accéder aux page admin, employé et client
+    # Employé peut accéder aux pages employé et client
+    # Client peut accéder aux pages client
+    role_hierarchy:
+        ROLE_ADMIN: [ROLE_EMPLOYE]
+        ROLE_EMPLOYE: [ROLE_USER]
 
-    # Note: Only the *first* matching rule is applied
+
+    #Contrôle d'accès aux pages selon le rôle de l'utilisateur, définit quelle routes pour quel rôle
+    #Règles vérifiées dans l'ordre, la première qui correspond est appliquée 
+    #/admin/* réservé à l'administrateur
+    #/employe/* réservé aux employés (dont admin graâce à la hiérarchie des rôles)
+    #/user/* réservé aux clients connectés    
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/employe, roles: ROLE_EMPLOYE }
+        - { path: ^/user, roles: ROLE_USER }
 
-when@test:
-    security:
-        password_hashers:
-            # Password hashers are resource-intensive by design to ensure security.
-            # In tests, it's safe to reduce their cost to improve performance.
-            Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
-                algorithm: auto
-                cost: 4 # Lowest possible value for bcrypt
-                time_cost: 3 # Lowest possible value for argon
-                memory_cost: 10 # Lowest possible value for argon
+

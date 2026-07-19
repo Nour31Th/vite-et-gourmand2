@@ -1,0 +1,197 @@
+/* CSS de l'appli avec Bootstrap qui gère le reste (grille, composant, reset)*/
+
+/* variables pr utilisa° ds ts les fichiers css, ici déclaré pr être accessible*/
+:root {
+    --vert: #5c7a5c;                                    /* boutons prcpx */
+    --beige: #c4a882;                                   /* titres et footer */
+    --terre : #c4693a;                                  /* boutons action */
+    --brun: #2c2b1a;                                    /* txt, footer, navbar, liens */
+    --bgclair: #f5f2ec;                                 /* fond crème arrière plan */
+    --grisl: #4a4a3a;                                   /* txts secondaires */
+}
+
+/* corps page */
+body {
+    font-family: 'Lato', sans-serif;
+    font-size: 16px;
+    color: #1a1a1a ; 
+    line-height: 1.7;
+    background-color: var(--bgclair);
+    min-height: 100vh;                     /* min-height et flex-direction=footer tjrs en bas */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Typographie selon hiérarchie titres */
+h1 { 
+    font-family: 'Montserrat', sans-serif; 
+    font-size: 36px; 
+    font-weight: 700; 
+    color: var(--brun); 
+    line-height: 1.2;
+}
+h2 { 
+    font-family: 'Poppins', sans-serif; 
+    font-size: 28px; 
+    font-weight: 600px; 
+    color: var(--brun); 
+    line-height: 1.3;
+}
+h3 {
+    font-family: 'Open Sans', sans-serif; 
+    font-size: 2Opx; 
+    font-weight: 600;
+    color: var(--brun); 
+    line-height: 1.4;
+}
+p {
+    font-family: 'Lato', sans-serif ; 
+    font-size: 16px; 
+    color: #1a1a1a; 
+    line-height: 1.7;
+}
+small, .small  {
+    font-family: 'Lexend', sans-serif;
+    font-size: 13px; 
+    color: var(--grisl); 
+    line-height: 1.5;
+}
+
+/* responsive taille mobile*/
+@media (max-width:768px) {
+    h1 { font-size: 26px;}
+    h2 { font-size: 20px;}
+    h3 { font-size: 16px;}
+    body { font-size: 15px; line-height: 1.6;}
+    small, .small { font-size: 12px;}
+}
+
+/* navbar, logo = centre mobile, gauche desktop */
+
+.navbar-inner {                        /* Conteneur interne navbar */
+    display: flex;
+    align-items: center;
+    height: 80px;
+    width: 100%;
+    position: relative;
+}
+.navbar-logo {                   /* logo au centre pr mobile & à gauche pr desktop */
+    display: flex; 
+    align-items: center;
+}
+.navbar-logo-img {              /* taille logo */
+    height: 48px;
+    width: auto;
+}
+@media (max-width : 991px) {
+    .navbar-logo { 
+        position: absolute;      /* position absolute pr que mobile centre sans affecter bouton menu hamburger qui doit rester à gauche */
+        left: 50%;
+        transform : translateX(-50%);
+    }
+}
+
+/* lien navbar brun, souligné vert pr survol et actif */
+.nav-link { 
+    font-family:'Lato', sans-serif; 
+    color: var(--brun)!important;
+}
+.nav-link:hover {
+    color: var(--vert) !important;
+}
+.nav-link.active, { 
+    color: var(--vert) !important; 
+    font-weight: 700; 
+    border_bottom: 2px solid var(--vert);
+}
+
+/* menu mobile fd blanc, bordure & ombre */
+#navMenu { 
+    background: white; 
+    padding: 0 16px 8px; 
+    border-top: 1px solid #e0ddd5; 
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* boutons personnalisés 
+classe qui s'utilisent avec classe bootstrap btn --> <button class="btn btn-vert">Commander</button> */
+.btn-vert { 
+    background: var(--vert); 
+    color: #fff; 
+    font-family: 'Roboto', sans-serif; 
+    font-weight: 700; 
+    letter-spacing: 0.5px; 
+    min-height: 44px; 
+    border: none; 
+    border-radius: 6px; 
+}
+.btn-terre { background: var(--terre); 
+    color: #fff; 
+    font-family: 'Robot', sans-serif; 
+    font-weight: 700; 
+    letter-spacing: 0.5px; 
+    min-height: 44px;
+    border: none; 
+    border-radius: 6px;
+}
+.btn-brun { 
+    background: var(--brun); 
+    color: #fff; 
+    font-family: 'Robot', sans-serif; 
+    font-weight: 700; 
+    letter-spacing: 0.5px; 
+    min-height: 44px;
+    border: none; 
+    border-radius: 6px;
+}
+.btn-vert:hover { 
+    background: #4a6349; 
+    color: #fff; 
+}
+.btn-terre:hover { 
+    background: #a8572e; 
+    color: #fff; 
+}
+.btn-brun:hover { 
+    background: #1a1a0f; 
+    color: #fff; 
+}
+
+/* footer, margin to auto --> pousse footer en bas grâce à displays flex sur body*/
+footer { 
+    background: var(--brun); 
+    color: #9A9A7A; 
+    margin-top: auto;
+}
+footer h5 { 
+    color: var(--beige); 
+    font-family: 'Lato', sans-serif; 
+    font-size: 11px; 
+    text-transform: uppercase; 
+    letter-spacing: 0.8px; 
+}
+footer a { 
+    color:#9A9A7A; 
+    text-decoration: none; 
+}
+footer a:hover { 
+    color: var(--beige);
+}
+/* horaires dans footer */
+.footer-horaires { 
+    font-size: 0.85rem; 
+}
+.footer-horaire-item { 
+    margin-right: 1rem; 
+    display: inline-block; 
+}
+
+/*contenu principal*/
+.main-content {
+    flex: 1;                 /*prend tt espace dispo entre navbar et footer*/
+    padding: 2rem 0;
+}
+
+
+
+

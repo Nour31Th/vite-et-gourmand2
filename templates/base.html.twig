@@ -1,24 +1,185 @@
+{# template pr tte l'appli, présent ds les autres templates --> via{% extends 'base.html.twig' %} 
+   Blocs ici : title -> titre onglet,  page_css-> css spécifique page , body->contenu , page_js->js de la page
+#}
+
 <!DOCTYPE html>
-<html>
+<html lang="fr">
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-        {% block stylesheets %}
-        {% endblock %}
+        {# meta description pr SEO#}
+        <meta name="viewport" content="width=device-width, intial-scale=1.0">
+        <meta name="description" content="Vite & Gourmand -Traiteur livraison à domicile Bordeaux">
+        
+        <title>{% block title %}Vite et Gourmand{% endblock %}</title>
+        
+        {# logo onglet navigateur #} 
+        <link rel"icon" href="{{ asset('images/logo.svg') }}">
 
-        {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
-        {% endblock %}
+        {# police google fonts #} 
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Poppins:wght@400;600&family=Open+Sans:wght@600&family=Lato:wght@400;700&family=Roboto:wght@700&family=Lexend:wght@400;500&display=swap" rel="stylesheet">
+        
+        {# css bootstrap5 w/ cdn #} 
+        <link href ="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel=stylesheet"> 
+        
+        {#fichier css de tte l'appli#}
+        <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 
-        {% set frankenphp_hot_reload = app.request.server.get('FRANKENPHP_HOT_RELOAD') %}
-        {% if frankenphp_hot_reload %}
-        <meta name="frankenphp-hot-reload:url" content="{{ frankenphp_hot_reload }}">
-        <script src="https://cdn.jsdelivr.net/npm/idiomorph"></script>
-        <script src="https://cdn.jsdelivr.net/npm/frankenphp-hot-reload/+esm" type="module"></script>
-        {% endif %}
+        {# css spécifique pr pages enfants et ici vide par défaut#}
+        {% block page_css %} {%endblock%}
     </head>
     <body>
-        {% block body %}{% endblock %}
+
+      {#lien evitement accessblité pr améliorer experience utilisateur #} 
+      <a href=href="#main" class="visually-hidden-focusable">Aller au contenu principal</a>
+
+      {# ici la navbar #}
+        <nav class="navbar navbar-expand-lg bg-white border-bottom" aria-label="Navigation principale">
+           <div class="container-x1 px-4">
+             <div class="navbar-inner">
+
+               {# btn menu hamburger mobile#}
+               <button class="navbar-toggler d-lg-none border-0 p-0 me-auto"
+                       type="button"
+                       data-bs-toggle="collapse
+                       data-bs-target="#navMenu"
+                       aria-label="Ouvrir le menu">
+                 <span class="navbar-toggler-icon"></span>
+               </button>
+               
+               {# logo#}
+               <a href="{{ path ('app_home') }}" class="navbar-logo">
+                 <img src="{{ asset ('images/logo.svg') }}"
+                    alt=LOGO vite et Gourmand
+                    class="navbar-logo-img">
+               </a>
+
+               {# menu desktop#}
+               <ul class="navbar-nav ms-auto gap-3 align-items-center d-none d-lg-flex">
+                   <li class="nav-item">
+                       <a href="{{ path('app_home') }}" class="nav-link">Accueil</a>
+                   </li>
+                   <li class="nav-item">
+                       <a href="{{ path('app_menu_index') }}" class="nav-link">Nos menus</a>
+                   </li>
+                   <li class="nav-item">
+                       <a href="{{ path('app_contact') }}" class="nav-link">Contact</a>
+                   </li>
+                     {% if app.user %}
+                         {% if is_granted('ROLE_ADMIN') %}
+                            <li class="nav-item">
+                                <a href="{{ path('app_admin_dashboard') }}" class="nav-link">Admin</a>
+                            </li>
+                        {% elseif is_granted('ROLE_EMPLOYE') %}
+                           <li class="nav-item">
+                                <a href="{{ path('app_employe_dashboard') }}" class="nav-link">Employé</a>
+                           </li>
+                        {% else %}
+                           <li class="nav-item">
+                                <a href="{{ path('app_user_dashboard') }}" class="nav-link">Mon espace</a>
+                           </li>
+                        {% endif %}
+                           <li class="nav-item">
+                                <a href="{{ path('app_logout') }}" class="btn btn-brun btn-sm">Déconnexion</a>
+                           </li>
+                       {% else %}
+                           <li class="nav-item">
+                                <a href="{{ path('app_login') }}" class="nav-link">Connexion</a>
+                           </li>
+                           <li class="nav-item">
+                                <a href="{{ path('app_register') }}" class="btn btn-vert btn-sm">S'inscrire</a>
+                           </li>
+                     {% endif %}
+                </ul>
+
+              </div>
+
+            {# menu mobile#}
+            <div class+"collapse d-lg-none" id="navmenu">
+                  <ul class="navbar-nav">
+                      <li class="nav-item">
+                           <a href="{{ path('app_home') }}" class="nav-link py-2">Accueil</a>
+                      </li>
+                      <li class="nav-item">
+                          <a href="{{ path('app_menu_index') }}" class="nav-link py-2">Nos menus</a>
+                      </li>
+                      <li class="nav-item">
+                          <a href="{{ path('app_contact') }}" class="nav-link py-2">Contact</a>
+                      </li>
+                      {% if app.user %}
+                         {% if is_granted('ROLE_ADMIN') %}
+                            <li class="nav-item">
+                                <a href="{{ path('app_admin_dashboard') }}" class="nav-link py-2">Admin</a>
+                            </li>
+                         {% elseif is_granted('ROLE_EMPLOYE') %}
+                           <li class="nav-item">
+                                <a href="{{ path('app_employe_dashboard') }}" class="nav-link py-2">Employé</a>
+                           </li>
+                         {% else %}
+                           <li class="nav-item">
+                                <a href="{{ path('app_user_dashboard') }}" class="nav-link py-2">Mon espace</a>
+                           </li>
+                         {% endif %}
+                           <li class="nav-item">
+                                <a href="{{ path('app_logout') }}" class="nav-link py-2">Déconnexion</a>
+                           </li>
+                         {% else %}
+                           <li class="nav-item">
+                                <a href="{{ path('app_login') }}" class="nav-link py-2">Connexion</a>
+                           </li>
+                           <li class="nav-item">
+                                <a href="{{ path('app_register') }}" class="nav-link py-2">S'inscrire</a>
+                           </li>
+                     {% endif %}
+                  </ul>
+              </div>
+           </div>
+        </nav>
+
+      {#msg flash (ex: identifiants incorrects)#}
+        <div class="container-xl px-4 mt-3">
+            {% for type, messages in app.flashes %}
+                {% for message in messages %}
+                   <div class="alert alert-{{ type }} alert-dismissible fade show">
+                       {{ message }}
+                       <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                  </div>
+                {% endfor %}
+            {% endfor %}
+        </div>
+
+      {#contenu principal#}                
+        <main class="main-content" id="main">
+            <div class="container-xl px-4">
+               {% block body %}{% endblock %}
+            </div>
+        </main>
+      
+       {#footer#}  
+        <footer class="footer py-4">
+            <div class="container-xl px-4 text-center">
+              <p class="mb-1">&copy; {{ "now"|date("Y") }} Vite & Gourmand — Traiteur à Bordeaux</p>
+                {% if horaires is defined and horaires|length > 0 %}
+                    <div class="footer-horaires mt-2">
+                       {% for horaire in horaires %}
+                          <span class="footer-horaire-item">
+                             <strong>{{ horaire.jour }}</strong> :
+                             {{ horaire.heureOuverture|date('H:i') }} -
+                             {{ horaire.heureFermeture|date('H:i') }}
+                          </span>
+                       {% endfor %}
+                    </div>
+               {% endif %}
+           </div>
+       </footer>
+       
+       {#bootstrap js#}  
+       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+       
+       {#js global#} 
+       <script src="{{ asset('js/app.js') }}"></script> 
+       
+       {# JS spécifique à la page #}
+       {% block page_js %}{% endblock %}
+
     </body>
 </html>

@@ -1,0 +1,132 @@
+/*styles menus (page vue globale menu, menu détaillé) */
+
+/* filtres en ht de page, cf menu-filter.js*/
+.filtres-container { 
+    background: white; 
+    border-radius: 8px; 
+    padding: 1.5rem; 
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+    border-left: 4px solid var(--vert);
+}
+
+.filtres-container h2 { 
+    color: var(--vert); 
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Personnlsa° selects Bootstrap pr filtres */
+.filtres-container .form-select:focus {
+    border-color: var(--vert);
+    box-shadow: 0 0 0 0.2rem rgba(92,122,92,0.25);
+}
+
+/* vue globale des menus */
+#menus-container { 
+    display: grid;                                                 /* grid automtq, responsive sans medias queries */
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* auto-fill-> le + possible de colonnes, avec valeur min et max égal entre colonnes */
+    gap: 1.5rem; 
+}
+
+/* msg si pas de resultats */
+.no-result { 
+    text-align: center; 
+    color: #666;
+    font-style: italic; 
+    padding: 2rem; 
+}
+
+/* Cards menus */
+.menu-card { 
+    background: white;
+    border-radius: 10px; 
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.menu-card:hover { 
+    transform: translateY(-4px); 
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.menu-card img { 
+    width: 100%; 
+    height: 200px; 
+    object-fit: cover; 
+}
+
+.menu-card .card-body {
+    padding: 1.2rem;
+}
+
+.menu-card .card-title {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    color: var(--brun);
+    font-size: 1.1rem;
+}
+
+.menu-card .card-theme {
+    font-size: 0.8rem;
+    color: var(--grisl);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+}
+
+.menu-card .card-prix {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--vert);
+}
+
+/* badge reduction 10% cf commande.js*/ 
+.badge-reduction { 
+    background-color: var(--terre); 
+    color: white; 
+    padding: 4px 10px; 
+    border-radius: 20px; 
+    font-size: 0.8rem; 
+    font-weight: 700;
+    font-family: 'Roboto', sans-serif;     
+}
+
+/*photos cf page menu détaillé*/
+.menu-carousel img { 
+    height: 350px;
+    object-fit: cover;
+    border-radius: 8px;
+    width: 100%;
+}
+
+/* menu détaillé */
+.menu-detail-prix { 
+    font-family: 'Montserrat', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--vert);
+}
+    
+/* etiquetes allerenes pr plats */
+.allergene-badge { 
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffc107;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.78rem;
+    font-family: 'Lexend', sans-serif;
+    margin: 2px;
+    display: inline-block; 
+}
+
+
+
+    

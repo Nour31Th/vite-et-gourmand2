@@ -1,0 +1,79 @@
+/* style formulaires
+utilise variables app.css --> root */
+
+/* page connexion */
+.login-container { 
+    min-height: 80vh; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    background-color: var(--bgclair); 
+}
+
+.login-card { 
+    background: white; 
+    border-radius: 12px; 
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
+    padding: 2.5rem; 
+    width: 100%; 
+    max-width: 420px;
+}
+
+.login-header { 
+    text-align: center; 
+    margin-bottom: 2rem; 
+}
+
+.login-titre { 
+    color: var(--vert); 
+    font-family: 'Monsterrat', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+.login-sous-titre { 
+    color: var(--grisl); 
+    font-size: 0.95rem;
+}
+
+.login-footer { 
+    text-align: center; 
+    margin-top: 1.5rem; 
+    font-size: 0.9rem; 
+    color: var(--grisl); 
+    display: flex; 
+    justify-content: center; 
+    gap: 0.5rem; 
+}
+
+.login-footer a {
+    color: var(--vert);
+    text-decoration: none;
+}
+
+.login-footer a:hover {
+    color: var(--terre);
+}
+
+/* personls° bootstrap */
+.form-control:focus { 
+    border-color: var(--vert); 
+    box-shadow: 0 0 0 0.2rem rgba(92, 122, 92, 0.25); }
+
+.form-label { 
+    font-weight: 600; 
+    color: var(--brun);
+    font-family: 'Lato', sans-serif;
+}
+
+/* erreur champ */
+.form-control.is-invalid:focus {
+    border-color: var(--terre);
+    box-shadow: 0 0 0 0.2rem rgba(196,105,58,0.25);
+}
+
+.invalid-feedback {
+    color: var(--terre);
+    font-size: 0.85rem;
+}
+
