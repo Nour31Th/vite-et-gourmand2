@@ -1,0 +1,46 @@
+{# Formulaire demande réinitialisa° mdp #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Mot de passe oublié — Vite & Gourmand{% endblock %}
+
+{% block page_css %}
+    <link rel="stylesheet" href="{{ asset('css/forms.css') }}">        {# cf fichier css #}
+{% endblock %}
+
+{% block body %}
+<div class="login-container">
+    <div class="login-card">
+
+        <div class="login-header">
+            <h1 class="login-titre">Mot de passe oublié</h1>
+            <p class="login-sous-titre">Saisissez votre email pour recevoir un lien de réinitialisation</p>
+        </div>
+
+        <form action="{{ path('app_reset_password') }}" method="post">
+            <input type="hidden" name="_token" value="{{ csrf_token('reset_password') }}">
+
+            <div class="mb-3">
+                <label for="email" class="form-label">Adresse email</label>
+                <input type="email"
+                       id="email"
+                       name="email"
+                       class="form-control"
+                       placeholder="votre@email.fr"
+                       required>
+            </div>
+
+            <div class="d-grid mt-4">
+                <button type="submit" class="btn btn-vert">
+                    Envoyer le lien
+                </button>
+            </div>
+        </form>
+
+        <div class="login-footer mt-3">
+            <a href="{{ path('app_login') }}">Retour à la connexion</a>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

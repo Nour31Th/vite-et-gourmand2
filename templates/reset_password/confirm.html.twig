@@ -1,0 +1,53 @@
+{# Formulaire new mdp, user a cliqué lien reçu par mail avant #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau mot de passe — Vite & Gourmand{% endblock %}
+
+{% block page_css %}
+    <link rel="stylesheet" href="{{ asset('css/forms.css') }}">       {# cf fichier css #}
+{% endblock %}
+
+{% block body %}
+<div class="login-container">
+    <div class="login-card">
+
+        <div class="login-header">
+            <h1 class="login-titre">Nouveau mot de passe</h1>
+            <p class="login-sous-titre">Choisissez un nouveau mot de passe sécurisé</p>
+        </div>
+
+        <form action="{{ path('app_reset_password_confirm', {selector: selector}) }}" method="post">
+            <input type="hidden" name="_token" value="{{ csrf_token('reset_confirm') }}">            {#Token CSRF#}
+            <input type="hidden" name="token" value="{{ token }}">                                   {#Token secret en champ caché, verif° par controller#}
+
+            <div class="mb-3">
+                <label for="password" class="form-label">Nouveau mot de passe</label>
+                <input type="password"
+                       id="password"
+                       name="password"
+                       class="form-control"
+                       placeholder="8 caractères minimum"
+                       required>
+            </div>
+
+            <div class="mb-3">
+                <label for="confirm_password" class="form-label">Confirmer le mot de passe</label>
+                <input type="password"
+                       id="confirm_password"
+                       name="confirm_password"
+                       class="form-control"
+                       placeholder="Retapez votre mot de passe"
+                       required>
+            </div>
+
+            <div class="d-grid mt-4">
+                <button type="submit" class="btn btn-vert">
+                    Enregistrer le mot de passe
+                </button>
+            </div>
+        </form>
+
+    </div>
+</div>
+{% endblock %}
