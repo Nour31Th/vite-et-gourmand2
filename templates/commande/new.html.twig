@@ -1,0 +1,193 @@
+{# page formulaire commande, variable menu -> obj Menu w/ prix, nb_personnes_min, titre etc
+token CSRF obligatoire
+data-* attributes pr transmettre données PHP vers JS
+commande.js calcule prix dynamiqmnt #}
+
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Commander — {{ menu.titre }} — Vite & Gourmand{% endblock %}
+
+{% block page_css %}
+    <link rel="stylesheet" href="{{ asset('css/forms.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/menu.css') }}">
+{% endblock %}
+
+{% block body %}
+
+{#titre menu#}
+<div class="hero-bandeau-page">
+    <h1 class="hero-bandeau-titre">Commander — {{ menu.titre }}</h1>
+</div>
+
+<section class="section-commande">
+    <div class="container-xl px-4">
+
+        {#lien retour détail du menu #}
+        <a href="{{ path('app_menu_show', {id: menu.id}) }}" class="lien-retour">
+            ← Retour au menu
+        </a>
+
+        <div class="row g-4 mt-2">
+
+            {#formulaire commande à gauche#}
+            <div class="col-12 col-lg-7">
+                <div class="commande-card">
+                    <h2 class="commande-section-titre">Informations de livraison</h2>
+
+                    <form action="{{ path('app_commande_new', {id: menu.id}) }}" method="post">
+
+                        {#token CSRF->protect°#}
+                        <input type="hidden"
+                               name="_token"
+                               value="{{ csrf_token('commande_' ~ menu.id) }}">
+
+                        {#adresse livraison#}
+                        <div class="mb-3">
+                            <label for="commande_adresse_livraison" class="form-label">
+                                Adresse de livraison *
+                            </label>
+                            <input type="text"
+                                   id="commande_adresse_livraison"
+                                   name="adresse_livraison"
+                                   class="form-control"
+                                   placeholder="Ex: 12 rue du Médoc"
+                                   required>
+                        </div>
+
+                        {#ville livraison qui sert pr calcul frais JS #}
+                        <div class="mb-3">
+                            <label for="commande_ville_livraison" class="form-label">
+                                Ville de livraison *
+                            </label>
+                            <input type="text"
+                                   id="commande_ville_livraison"
+                                   name="ville_livraison"
+                                   class="form-control"
+                                   placeholder="Ex: Bordeaux"
+                                   required>
+                            <div class="form-text">
+                                Livraison gratuite à Bordeaux · +5 € pour les autres communes
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            {#date presta°#}
+                            <div class="col-md-6 mb-3">
+                                <label for="commande_date_prestation" class="form-label">
+                                    Date de prestation *
+                                </label>
+                                <input type="date"
+                                       id="commande_date_prestation"
+                                       name="date_prestation"
+                                       class="form-control"
+                                       min="{{ "now"|date("Y-m-d") }}"
+                                       required>
+                            </div>
+
+                            {#heur livraison #}
+                            <div class="col-md-6 mb-3">
+                                <label for="commande_heure_livraison" class="form-label">
+                                    Heure de livraison *
+                                </label>
+                                <input type="time"
+                                       id="commande_heure_livraison"
+                                       name="heure_livraison"
+                                       class="form-control"
+                                       required>
+                            </div>
+                        </div>
+
+                        {# Nb pers, déclenche calcul JS #}
+                        <div class="mb-4">
+                            <label for="commande_nb_personnes" class="form-label">
+                                Nombre de personnes *
+                                <span class="form-text">
+                                    (minimum {{ menu.nbPersonnesMin }})
+                                </span>
+                            </label>
+                            <input type="number"
+                                   id="commande_nb_personnes"
+                                   name="nb_personnes"
+                                   class="form-control"
+                                   min="{{ menu.nbPersonnesMin }}"
+                                   value="{{ menu.nbPersonnesMin }}"
+                                   required>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-vert btn-lg">
+                                Confirmer la commande
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+            {#recap à droite#}
+            <div class="col-12 col-lg-5">
+                <div class="commande-recap">
+
+                    <h2 class="commande-section-titre">Récapitulatif</h2>
+
+                    {#info menu#}
+                    <div class="recap-menu">
+                        <div class="recap-menu-titre">{{ menu.titre }}</div>
+                        <div class="recap-menu-info">
+                            {{ menu.theme }} — {{ menu.regime }}
+                        </div>
+                        <div class="recap-menu-info">
+                            À partir de {{ menu.nbPersonnesMin }} personnes
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    {#data-* attributes qui transmettent données PHP vers commande.js#}
+                    <div id="data-menu"
+                         data-prix="{{ menu.getPrix() }}"
+                         data-min="{{ menu.getNbPersonnesMin() }}">
+                    </div>
+
+                    {#réduc° affiché par commande.js si éligible, display:none par défaut, JS montre si nb >= min + 5 #}
+                    <div id="badge-reduction" class="badge-reduction mb-3" style="display:none">
+                         Réduction 10% appliquée !
+                    </div>
+
+                    {#détail prix maj dynmq w/ commande.js#}
+                    <div class="recap-prix-detail">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Prix du menu</span>
+                            <span id="prix-base">{{ menu.getPrix() }} €</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Frais de livraison</span>
+                            <span id="frais-livraison">Gratuit</span>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between recap-total">
+                            <span>Total estimé</span>
+                            <span id="prix-total" class="menu-detail-prix">
+                                {{ menu.getPrix() }} €
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="recap-note mt-3">
+                        Réduction de 10% à partir de {{ menu.getNbPersonnesMin() + 5 }} personnes
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block page_js %}
+    {#js calcul prix dynamique#}
+    <script src="{{ asset('js/commande.js') }}"></script>
+{% endblock %}

@@ -45,7 +45,7 @@ class MenuRepository extends ServiceEntityRepository
         }
 
         if ($nbPersonnes) {
-            $qb->andWhere('m.nbPersonnesMin <= :nbPersonnes'). // nb_personnes_min < ou = nb_personnes saisi par utilisateur
+            $qb->andWhere('m.nbPersonnesMin <= :nbPersonnes') // nb_personnes_min < ou = nb_personnes saisi par utilisateur
                ->setParameter('nbPersonnes', $nbPersonnes);
         }
 
