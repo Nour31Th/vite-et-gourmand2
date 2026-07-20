@@ -1,0 +1,129 @@
+{# template pr page vue globale des menus actifs w/ filtres dynamq
+filtres Fetch/AJAX via menu-filter.js pr maj liste menu ss recharger page
+variables: menus->tableau Menu[] pr affichage de base, thème-> tableau string pr select thème, regimes-> tableau string pr select régime
+#}
+
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Nos menus — Vite & Gourmand{% endblock %}
+
+{% block page_css %}
+    <link rel="stylesheet" href="{{ asset('css/menu.css') }}">      {#css page menus#}
+{% endblock %}
+
+{% block body %}
+
+{#titre page #}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1>Nos menus</h1>
+        <p class="lead">Découvrez nos formules adaptées spécialement pour vous à Bordeaux</p>
+    </div>
+</div>
+
+<div class="row">
+
+    {#colonne filtre à gauch#}
+    <div class="col-12 col-lg-3 mb-4">
+        <div class="filtres-container">
+            <h2>Filtrer les menus</h2>
+
+            {#filtre thème, options générées dynamqmnt depuis BDD via $themes passé par MenuController#}
+            <div class="mb-3">
+                <label for="filtre-theme" class="form-label">Thème culinaire</label>
+                <select id="filtre-theme" class="form-select">
+                    <option value="tous">Tous les thèmes</option>
+                    {% for theme in themes %}
+                        <option value="{{ theme }}">{{ theme }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            {#filtre régime#}
+            <div class="mb-3">
+                <label for="filtre-regime" class="form-label">Régime alimentaire</label>
+                <select id="filtre-regime" class="form-select">
+                    <option value="tous">Tous les régimes</option>
+                    {% for regime in regimes %}
+                        <option value="{{ regime }}">{{ regime }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            {#filtre prix max#}
+            <div class="mb-3">
+                <label for="filtre-prix" class="form-label">
+                    Prix maximum : <span id="valeur-prix">100</span> €
+                </label>
+                <input type="range"
+                       id="filtre-prix"
+                       class="form-range"
+                       min="0"
+                       max="200"
+                       step="5"
+                       value="100">
+            </div>
+
+            {#filtre nb personnnes#}
+            <div class="mb-3">
+                <label for="filtre-nb-personnes" class="form-label">Nombre de personnes</label>
+                <input type="number"
+                       id="filtre-nb-personnes"
+                       class="form-control"
+                       min="1"
+                       max="50"
+                       placeholder="Ex: 4">
+            </div>
+
+        </div>
+    </div>
+
+    {#colonne menu à droite#}
+    <div class="col-12 col-lg-9">
+
+        {#compteur résultats, maj w/. menu-filter.js #}
+        <p class="mb-3 text-muted">
+            <span id="compteur-resultats">{{ menus|length }} menu(s) trouvé(s)</span>
+        </p>
+
+        {#zone rafraîchissmnt dynamq menus, id="menus-container" ciblé par menu-filter.js pr inject° du DOM#}
+        <div id="menus-container">
+            {% for menu in menus %}
+                <article class="menu-card">
+                    {#image menu, affichage 1ère photo sinon affiche image par défaut#}
+                    <img src="{{ menu.images.first
+                                 ? asset('images/menus/' ~ menu.images.first.url)
+                                 : asset('images/default-menu.jpg') }}"
+                         alt="{{ menu.titre }}"
+                         loading="lazy">
+
+                    <div class="card-body p-3">
+                        <p class="card-theme">{{ menu.theme }} — {{ menu.regime }}</p>
+                        <h3 class="card-title">{{ menu.titre }}</h3>
+                        <p class="card-prix">{{ menu.prix }} € / pers.</p>
+                        <p class="small">À partir de {{ menu.nbPersonnesMin }} personnes</p>
+                        <a href="{{ path('app_menu_show', {id: menu.id}) }}"
+                           class="btn btn-vert btn-sm mt-2">
+                            Voir ce menu
+                        </a>
+                    </div>
+                </article>
+            {% else %}
+                {#si aucun menu en bdd, affiche ceci : #}
+                <p class="no-result">Aucun menu disponible pour le moment.</p>
+            {% endfor %}
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
+
+{% block page_js %}
+    {#js des filtres chargé uniquement ici#}
+    <script src="{{ asset('js/menu-filter.js') }}"></script>
+
+    {#maj affichage prix s/ slider,script dédié à interac° slider prix#}
+    <script src="{{ asset('js/prix-slider.js') }}"></script>
+{% endblock %}

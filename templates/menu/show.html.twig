@@ -1,0 +1,211 @@
+{# template pr page détail d'un menu w/ ttes ces infos (photos, titre, thème, régime, descritp°, condit°, plats & allergènes) + calcul prix dynmq (commande.js) + btn commande
+variable menu --> obj menu et ses relations #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ menu.titre }} — Vite & Gourmand{% endblock %}
+
+{% block page_css %}
+    <link rel="stylesheet" href="{{ asset('css/menu.css') }}">     {#css page menus#}
+{% endblock %}
+
+{% block body %}
+
+<div class="row">
+
+{#colonne gauche photos+infos prcpl#}
+    <div class="col-12 col-lg-7 mb-4">
+
+        {#carousel photos bootstrap, image en slide#}
+        {% if menu.images|length > 0 %}
+            <div id="carouselMenu" class="carousel slide menu-carousel mb-4"
+                 data-bs-ride="carousel">
+
+                {#indicateurs (points) -> bas carousel #}
+                <div class="carousel-indicators">
+                    {% for i, image in menu.images %}
+                        <button type="button"
+                                data-bs-target="#carouselMenu"
+                                data-bs-slide-to="{{ i }}"
+                                class="{{ i == 0 ? 'active' : '' }}">
+                        </button>
+                    {% endfor %}
+                </div>
+
+                {#slides#}
+                <div class="carousel-inner">
+                    {% for i, image in menu.images %}
+                        <div class="carousel-item {{ i == 0 ? 'active' : '' }}">
+                            <img src="{{ asset('images/menus/' ~ image.url) }}"
+                                 alt="{{ menu.titre }} — photo {{ i + 1 }}"
+                                 class="d-block w-100">
+                        </div>
+                    {% endfor %}
+                </div>
+
+                {#btn précédent/suivant #}
+                {% if menu.images|length > 1 %}
+                    <button class="carousel-control-prev" type="button"
+                            data-bs-target="#carouselMenu" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon"></span>
+                        <span class="visually-hidden">Précédent</span>
+                    </button>
+                    <button class="carousel-control-next" type="button"
+                            data-bs-target="#carouselMenu" data-bs-slide="next">
+                        <span class="carousel-control-next-icon"></span>
+                        <span class="visually-hidden">Suivant</span>
+                    </button>
+                {% endif %}
+
+            </div>
+        {% else %}
+            {#image par défaut#}
+            <img src="{{ asset('images/default-menu.jpg') }}"
+                 alt="{{ menu.titre }}"
+                 class="img-fluid rounded mb-4">
+        {% endif %}
+
+        {#descript° #}
+        {% if menu.description %}
+            <div class="mb-4">
+                <h2>Description</h2>
+                <p>{{ menu.description }}</p>
+            </div>
+        {% endif %}
+
+        {#condit°#}
+        {% if menu.conditions %}
+            <div class="alert alert-info">
+                <strong>Conditions :</strong> {{ menu.conditions }}
+            </div>
+        {% endif %}
+
+        {#plats+allergènes#}
+        {% if menu.plats|length > 0 %}
+            <div class="mb-4">
+                <h2>Composition du menu</h2>
+                {% for plat in menu.plats %}
+                    <div class="mb-3 p-3 bg-white rounded shadow-sm">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h3 class="mb-1">{{ plat.nom }}</h3>
+                                <p class="small text-muted mb-1">{{ plat.type }}</p>
+                                {% if plat.description %}
+                                    <p class="mb-2">{{ plat.description }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        {#allergènes #}
+                        {% if plat.allergenes|length > 0 %}
+                            <div class="mt-2">
+                                <span class="small text-muted">Allergènes : </span>
+                                {% for allergene in plat.allergenes %}
+                                    <span class="allergene-badge">{{ allergene.nom }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+    </div>
+
+    {#colonne à droite, calculateur prix+commande#}
+    <div class="col-12 col-lg-5">
+        <div class="p-4 bg-white rounded shadow-sm sticky-top" style="top: 2rem">
+
+            {#infos princpl#}
+            <p class="mb-1 text-muted">{{ menu.theme }} — {{ menu.regime }}</p>
+            <h1 class="h2 mb-2">{{ menu.titre }}</h1>
+
+            {#prix de base#}
+            <p class="menu-detail-prix mb-1">
+                {{ menu.prix }} € <span class="fs-6 fw-normal text-muted">/ personne</span>
+            </p>
+            <p class="small text-muted mb-4">
+                À partir de {{ menu.nbPersonnesMin }} personnes
+            </p>
+
+            {# données pr commande.js, data-* attributes transmettent données PHP vers JS#}
+            <div id="data-menu"
+                 data-prix="{{ menu.prix }}"
+                 data-min="{{ menu.nbPersonnesMin }}">
+            </div>
+
+            {#calculateur prix maj par commande.js #}
+            <div class="mb-4">
+                <h3 class="h5 mb-3">Calculer votre prix</h3>
+
+                <div class="mb-3">
+                    <label for="calc-nb-personnes" class="form-label">
+                        Nombre de personnes
+                    </label>
+                    <input type="number"
+                           id="calc-nb-personnes"
+                           class="form-control"
+                           min="{{ menu.nbPersonnesMin }}"
+                           value="{{ menu.nbPersonnesMin }}"
+                           placeholder="Nombre de personnes">
+                </div>
+
+                <div class="mb-3">
+                    <label for="calc-ville" class="form-label">
+                        Ville de livraison
+                    </label>
+                    <input type="text"
+                           id="calc-ville"
+                           class="form-control"
+                           placeholder="Ex: Bordeaux">
+                </div>
+
+                {#résultat calcul maj par commande.js #}
+                <div class="p-3 bg-light rounded">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span>Prix du menu</span>
+                        <span id="prix-base">{{ menu.prix }} €</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-1">
+                        <span>Frais de livraison</span>
+                        <span id="frais-livraison">0 €</span>
+                    </div>
+
+                    {#badge réduction par commande.js si éligible #}
+                    <div id="badge-reduction-container" class="mb-2" style="display:none">
+                        <span class="badge-reduction">- 10% de réduction !</span>
+                    </div>
+
+                    <hr>
+                    <div class="d-flex justify-content-between fw-bold">
+                        <span>Total estimé</span>
+                        <span id="prix-total" class="menu-detail-prix">{{ menu.prix }} €</span>
+                    </div>
+                </div>
+            </div>
+
+            {#btn commander si connecté #}
+            {% if app.user %}
+                <a href="{{ path('app_commande_new', {id: menu.id}) }}"
+                   class="btn btn-vert btn-lg w-100">
+                    Commander ce menu
+                </a>
+            {% else %}
+                <a href="{{ path('app_login') }}"
+                   class="btn btn-vert btn-lg w-100">
+                    Se connecter pour commander
+                </a>
+            {% endif %}
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block page_js %}
+    {# JS calculateur de prix sur feature/commande #}
+    <script src="{{ asset('js/commande.js') }}"></script>
+{% endblock %}
+
