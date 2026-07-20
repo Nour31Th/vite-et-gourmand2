@@ -1,8 +1,241 @@
+{# template pr page accueil, variables: avis->tableau obj avis, + newsletter#}
+
 {% extends 'base.html.twig' %}
 
-{% block title %}Accueil-Vite&Gourmand{% endblock %}
+{% block title %}Accueil-Vite & Gourmand{% endblock %}
+
+{% block page_css %}
+    <link rel="stylesheet" href="{{ asset('css/home.css') }}">     {#csspage d'accueil #}
+{% endblock %}
 
 {% block body %}
-    <h1>Bienvenue sur Vite & Gourmand</h1>
-    <p>Page d'accueil en construction...</p>
+
+{#section qui sommes nous + photo Julie & José#}
+<section class="section-accueil section-bgclair" aria-labelledby="titre-qui">
+    <p class="section-label" id="titre-qui">Qui sommes-nous ?</p>
+    <div class="row g-0 rounded overflow-hidden">
+
+        {#colonne txt#}
+        <div class="col-md-6 section-texte section-texte-beige">
+            <h2 class="section-sous-titre">Notre Histoire : Julie, José et Vous</h2>
+            <p class="section-paragraphe">
+                L'aventure Vite & Gourmand a débuté il y a 25 ans à Bordeaux. Depuis le premier jour,
+                notre duo et l'équipe travaillent avec la même ambition : prouver que l'on peut manger vite,
+                mais surtout très bien.
+            </p>
+            <p class="section-paragraphe mt-2">
+                Spécialistes de la cuisine de saison, nous créons des menus qui ne restent jamais figés.
+                Que ce soit pour un déjeuner sur le pouce ou pour célébrer les grandes occasions,
+                nous vous accompagnons dans tous vos événements, petits et grands.
+            </p>
+            <h2 class="section-sous-titre mt-3">Notre secret ?</h2>
+            <p class="section-paragraphe">
+                Un menu en constante évolution qui suit le rythme des saisons et nos inspirations
+                pour vous surprendre à chaque bouchée. Notre carte, en perpétuelle mutation,
+                est le reflet de notre créativité et de notre amour pour les bons produits.
+            </p>
+            <p class="section-italic">
+                Venez découvrir notre univers où la rapidité ne sacrifie jamais la gourmandise ni la qualité !
+            </p>
+            <a href="{{ path('app_menu_index') }}" class="btn btn-brun mt-3">Commander</a>
+        </div>
+
+        {#photo Julie & José #}
+        <div class="col-md-6 section-image">
+            <img src="{{ asset('images/julie_et_jose.png') }}"
+                 alt="Julie et José, fondateurs de Vite et Gourmand"
+                 class="section-img">
+        </div>
+
+    </div>
+</section>
+
+{#section présenta° équipe#}
+<section class="section-accueil section-white" aria-labelledby="titre-equipe">
+    <p class="section-label" id="titre-equipe">Notre équipe passionnée et professionnelle</p>
+    <div class="row g-0 rounded overflow-hidden">
+
+        {#colonne txt#}
+        <div class="col-md-6 section-texte section-texte-vert">
+            <h2 class="section-sous-titre section-sous-titre-white">
+                Chez Vite &amp; Gourmand, la qualité de votre expérience repose
+                sur une équipe soudée et un savoir-faire maîtrisé de bout en bout.
+            </h2>
+            <ul class="section-liste">
+                <li>
+                    Julie et José, forts de leurs 25 ans d'expérience, assurent la direction
+                    et l'âme de l'établissement, veillant à ce que chaque recette respecte
+                    l'identité de leur cuisine.
+                </li>
+                <li>
+                    En coulisses, nos employés de cuisine préparent chaque plat avec une rigueur
+                    artisanale, transformant des produits frais en moments gourmands.
+                </li>
+                <li>
+                    Enfin, nos livreurs assurent le dernier maillon de la chaîne avec ponctualité
+                    et courtoisie, pour que vos repas arrivent à destination dans des conditions
+                    irréprochables.
+                </li>
+            </ul>
+            <p class="section-paragraphe section-paragraphe-white mt-2">
+                Chaque membre de l'équipe partage la même exigence : vous offrir un service fluide
+                et professionnel, afin que votre seule préoccupation soit de savourer l'instant.
+            </p>
+        </div>
+
+        {#photo équipe #}
+        <div class="col-md-6 section-image">
+            <img src="{{ asset('images/photo_equipe.png') }}"
+                 alt="L'équipe Vite et Gourmand"
+                 class="section-img">
+        </div>
+
+    </div>
+</section>
+
+{#section livraison#}
+<section class="section-accueil section-bgclair" aria-labelledby="titre-livraison">
+    <p class="section-label" id="titre-livraison">Une livraison rapide dans Bordeaux et ses environs</p>
+    <div class="row g-0 rounded overflow-hidden">
+
+        {#colonne txt#}
+        <div class="col-md-6 section-texte section-texte-beige">
+            <h2 class="section-sous-titre">
+                Pour vous garantir une fraîcheur optimale et une ponctualité exemplaire,
+                nous assurons nous-mêmes nos livraisons au cœur de Bordeaux et dans sa périphérie.
+            </h2>
+            <p class="section-paragraphe">
+                Que vous soyez un particulier souhaitant un repas de fête à domicile ou une entreprise
+                en quête d'un déjeuner de qualité au bureau, notre service de livraison s'adapte à vos besoins.
+                Nous couvrons l'ensemble de la métropole bordelaise pour vous apporter la gourmandise
+                directement à votre porte, avec le sourire et le professionnalisme qui nous caractérisent
+                depuis 25 ans.
+            </p>
+
+            {#tarif livraison #}
+            <div class="livraison-info">
+                Livraison offerte à Bordeaux · +5 € hors Bordeaux
+            </div>
+
+            <a href="{{ path('app_contact') }}" class="btn btn-brun mt-2">
+                Voir les modalités de livraison
+            </a>
+        </div>
+
+        {#carte bdx #}
+        <div class="col-md-6 section-image">
+            <img src="{{ asset('images/carte_bdx_metropole.jpeg') }}"
+                 alt="Carte de la zone de livraison — Bordeaux Métropole"
+                 class="section-img">
+        </div>
+
+    </div>
+</section>
+
+{#section avis client#}
+<section class="section-accueil section-white" aria-labelledby="titre-avis">
+    <p class="section-label" id="titre-avis">Ce que vous pensez de nous !</p>
+    <p class="section-intro">
+        Votre satisfaction est notre plus belle récompense depuis 25 ans.
+        Que ce soit pour un déjeuner quotidien ou pour un événement mémorable,
+        nous sommes fiers de partager vos retours.
+    </p>
+
+    <div class="row g-3">
+        {% for avi in avis %}
+            <div class="col-md-3">
+                <article class="avis-card">
+
+                    {#note de 1 à 5, ● = note atteinte, ○ = note non atteinte#}
+                    <div class="avis-etoiles" aria-label="{{ avi.note }} étoiles sur 5">
+                        {% for i in 1..5 %}
+                            <span class="{{ i <= avi.note ? 'etoile-pleine' : 'etoile-vide' }}">
+                                {{ i <= avi.note ? '●' : '○' }}
+                            </span>
+                        {% endfor %}
+                    </div>
+
+                    {#commentaire#}
+                    <p class="avis-commentaire">« {{ avi.commentaire }} »</p>
+
+                    <hr class="avis-separateur">
+
+                    {#auteur avis#}
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="avis-initiales" aria-hidden="true">
+                            {{ avi.utilisateur.prenom|first }}{{ avi.utilisateur.nom|first }}
+                        </div>
+                        <div class="avis-nom">
+                            {{ avi.utilisateur.prenom }} {{ avi.utilisateur.nom }}
+                        </div>
+                    </div>
+
+                </article>
+            </div>
+        {% else %}
+            {#si 0 avis #}
+            <p class="text-muted">Aucun avis pour le moment.</p>
+        {% endfor %}
+    </div>
+
+    <div class="text-center mt-4">
+        <a href="{{ path('app_avis_liste') }}" class="btn btn-outline-secondary">
+            Voir tous les avis
+        </a>
+    </div>
+</section>
+
+{#newsletter, formlaire inscript° : POST /newsletter → app_newsletter, token CSRF obligatoire + consentement RGPD#}
+<section class="section-newsletter" aria-labelledby="titre-newsletter">
+    <div class="row align-items-center g-4">
+
+        {#titre#}
+        <div class="col-md-6">
+            <h2 class="newsletter-titre" id="titre-newsletter">Newsletter</h2>
+            <p class="newsletter-description">
+                Inscrivez-vous à notre newsletter pour ne rien rater entre
+                nos nouveautés, nos actualités et nos réductions !
+            </p>
+        </div>
+
+        {#formulaire #}
+        <div class="col-md-6">
+            <form action="{{ path('app_newsletter') }}" method="post">
+
+                {#token CSRF protec° c/ attauqes #}
+                <input type="hidden" name="_token" value="{{ csrf_token('newsletter') }}">
+
+                <label for="newsletter-email" class="newsletter-label">Email</label>
+                <div class="d-flex gap-2">
+                    <input type="email"
+                           id="newsletter-email"
+                           name="email"
+                           placeholder="Votre adresse e-mail"
+                           class="form-control"
+                           required>
+                    <button type="submit" class="btn btn-terre px-4">Je m'inscris</button>
+                </div>
+
+                {#consentement RGPD obligatoire #}
+                <div class="form-check mt-2">
+                    <input class="form-check-input"
+                           type="checkbox"
+                           id="newsletter-consent"
+                           required>
+                    <label class="form-check-label newsletter-consent-label"
+                           for="newsletter-consent">
+                        J'accepte de recevoir les communications, actualités et promotions
+                        de la part de Vite &amp; Gourmand. Vous pourrez à tout moment vous désinscrire.
+                        Pour plus d'information, consultez notre
+                        <a href="#" class="newsletter-lien-politique">Politique de confidentialité</a>.
+                    </label>
+                </div>
+
+            </form>
+        </div>
+
+    </div>
+</section>
+
 {% endblock %}
+
