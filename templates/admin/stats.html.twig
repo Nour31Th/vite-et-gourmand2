@@ -69,66 +69,12 @@ variables :total_commandes->nb total commandes (PostgreSQL), stats_by_menu->menu
 {% endblock %}
 
 {% block page_js %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-/*stats.js graphiques stat admin, données depuis MongoDBService via AdminController, affichées via Chart.js*/
-document.addEventListener('DOMContentLoaded', function () {
-
-    /*graphique commande/mois->stats_by_mois depuis MongoDB*/
-    const dataMois = {{ stats_by_mois|json_encode|raw }};
-
-    //formatage labels : "2026-1"->"Jan 2026"
-    const moisNoms = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
-    const labelsMois = dataMois.map(d => {
-        const m = d._id?.mois ?? 1;
-        const a = d._id?.annee ?? 2026;
-        return moisNoms[m - 1] + ' ' + a;
-    });
-    const valuesMois = dataMois.map(d => parseInt(d.nb ?? 0));
-
-    new Chart(document.getElementById('chartMois').getContext('2d'), {
-        type: 'bar',
-        data: {
-            labels: labelsMois,
-            datasets: [{
-                label: 'Commandes',
-                data: valuesMois,
-                backgroundColor: '#5C7A5C', // var(--vert)
-                borderRadius: 4,
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: { legend: { display: false } },
-            scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
-        }
-    });
-
-    /*graphique menu +commandés->stats_by_menu depuis MongoDB*/
-    const dataMenus = {{ stats_by_menu|json_encode|raw }};
-
-    const labelsMenus = dataMenus.map(d => d.titre ?? 'Menu');
-    const valuesMenus = dataMenus.map(d => parseInt(d.nb_commandes ?? 0));
-
-    new Chart(document.getElementById('chartMenus').getContext('2d'), {
-        type: 'bar',
-        data: {
-            labels: labelsMenus,
-            datasets: [{
-                label: 'Commandes',
-                data: valuesMenus,
-                backgroundColor: '#C4693A', // var(--terre)
-                borderRadius: 4,
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: { legend: { display: false } },
-            scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } },
-            indexAxis: 'y', // Graphique horizontal — meilleure lisibilité
-        }
-    });
-
-});
-</script>
+   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    {#passe données PHP vers JS via data-attributes pr éviter JS inline dans template Twig#}
+    <div id="stats-data"
+         data-mois="{{ stats_by_mois|json_encode|e('html_attr') }}"
+         data-menus="{{ stats_by_menu|json_encode|e('html_attr') }}">
+    </div>
+    
+   <scriptsrc="{{ asset('js/stats.js') }}"></script>
 {% endblock %}
