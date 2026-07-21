@@ -9,6 +9,7 @@ use App\Repository\CommandeRepository;
 use App\Repository\AvisRepository;
 use App\Repository\HoraireRepository;
 use App\Repository\UserRepository;
+use App\Service\MongoDBService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,7 +18,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-/*Routes :
+/*routes :
  *GET  /admin/dashboard->liste ttes les commandes
  *POST /admin/commande/{id}/statut->change statut
  *GET  /admin/employes->liste employés
@@ -271,7 +272,7 @@ class AdminController extends AbstractController
     #[Route('/stats', name: 'app_admin_stats')]
     public function stats(CommandeRepository $commandeRepo): Response
     {
-        //stat depuis PostgreSQL (MongoDB sera ajouté sur feature/mongodb)
+        // (MongoDB sera ajouté sur feature/mongodb)
         $totalCommandes  = count($commandeRepo->findAll());
         $commandesParMois = $commandeRepo->findCommandesParMois();
 
@@ -279,6 +280,36 @@ class AdminController extends AbstractController
             'total_commandes'   => $totalCommandes,
             'commandes_par_mois' => $commandesParMois,
         ]);
+    }
+
+    //constructeur
+    public function __construct(
+        private MongoDBService $mongoDBService
+    ) {}
+
+    //stats données MongoDB via MongoDBService affichées dans graphique Chart.js
+    #[Route('/stats', name: 'app_admin_stats')]
+    public function stats(CommandeRepository $commandeRepo): Response
+    {
+      //stat depuis PostgreSQL données de base
+      $totalCommandes = count($commandeRepo->findAll());
+   
+     //statMongoDB données analytiques
+     //getStatsByMenu() retourne menus les + commandés
+     $statsByMenu = $this->mongoDBService->getStatsByMenu();
+
+     //getStatsByMois() retourne commandes/mois
+     $statsByMois = $this->mongoDBService->getStatsByMois();
+
+     // CA total depuis MongoDB
+     $caTotal = $this->mongoDBService->getCaTotal();
+
+     return $this->render('admin/stats.html.twig', [
+        'total_commandes' => $totalCommandes,
+        'stats_by_menu'   => $statsByMenu,
+        'stats_by_mois'   => $statsByMois,
+        'ca_total'        => $caTotal,
+     ]);
     }
 
     //mail commande terminé

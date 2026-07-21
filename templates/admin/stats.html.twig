@@ -1,6 +1,6 @@
 {#template stats admin
-graphique Chart.js, données PostgreSQL (MongoDB sur feature/mongodb)
-variables :total_commandes->nb total commandes, commandes_par_mois->tableau [{mois, nb}]#}
+graphique Chart.js, données PostgreSQL, composant mongodb dédié
+variables :total_commandes->nb total commandes (PostgreSQL), stats_by_menu->menus les+ commandés (MongoDB), stats_by_mois->commandes/mois (MongoDB), ca_total->CA total (MongoDB)#}
 
 {% extends 'base.html.twig' %}
 
@@ -19,6 +19,7 @@ variables :total_commandes->nb total commandes, commandes_par_mois->tableau [{mo
 <section class="section-dashboard">
     <div class="container-xl px-4">
 
+        {#onglet#}
         <div class="dashboard-onglets mb-4">
             <a href="{{ path('app_admin_dashboard') }}" class="btn btn-sm btn-outline-secondary">Commandes</a>
             <a href="{{ path('app_admin_employes') }}" class="btn btn-sm btn-outline-secondary">Employés</a>
@@ -28,7 +29,7 @@ variables :total_commandes->nb total commandes, commandes_par_mois->tableau [{mo
             <a href="{{ path('app_employe_menus') }}" class="btn btn-sm btn-outline-secondary">Menus</a>
         </div>
 
-        {#total commandes #}
+        {#stat#}
         <div class="row g-4 mb-4">
             <div class="col-12 col-md-4">
                 <div class="stat-card">
@@ -36,12 +37,30 @@ variables :total_commandes->nb total commandes, commandes_par_mois->tableau [{mo
                     <div class="stat-label">Commandes totales</div>
                 </div>
             </div>
+            <div class="col-12 col-md-4">
+                <div class="stat-card">
+                    <div class="stat-nombre">{{ ca_total|number_format(2) }} €</div>
+                    <div class="stat-label">Chiffre d'affaires (MongoDB)</div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="stat-card">
+                    <div class="stat-nombre">{{ stats_by_menu|length }}</div>
+                    <div class="stat-label">Menus différents commandés</div>
+                </div>
+            </div>
         </div>
 
-        {#graphique commandes/mois — Chart.js #}
+        {#graphique commandes/mois #}
         <div class="commande-card mb-4">
-            <h2 class="commande-section-titre">Commandes par mois</h2>
-            <canvas id="chartCommandes" height="100"></canvas>
+            <h2 class="commande-section-titre">Commandes par mois (MongoDB)</h2>
+            <canvas id="chartMois" height="80"></canvas>
+        </div>
+
+        {#graphique menus les+commandés #}
+        <div class="commande-card mb-4">
+            <h2 class="commande-section-titre">Menus les plus commandés (MongoDB)</h2>
+            <canvas id="chartMenus" height="80"></canvas>
         </div>
 
     </div>
@@ -50,45 +69,66 @@ variables :total_commandes->nb total commandes, commandes_par_mois->tableau [{mo
 {% endblock %}
 
 {% block page_js %}
-    {# Chart.js via CDN #}
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-    /*stat mensuel commande (chart.js), rendu visuel alimenté par injecteur twig (admincontreoller)*/
-    document.addEventListener('DOMContentLoaded', function () {
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+/*stats.js graphiques stat admin, données depuis MongoDBService via AdminController, affichées via Chart.js*/
+document.addEventListener('DOMContentLoaded', function () {
 
-        //données transmises depuis Twig via json_encode
-        const data = {{ commandes_par_mois|json_encode|raw }};
+    /*graphique commande/mois->stats_by_mois depuis MongoDB*/
+    const dataMois = {{ stats_by_mois|json_encode|raw }};
 
-        //labels (mois) et valeurs (nb commandes)
-        const labels = data.map(d => d.mois ?? d[0] ?? '');
-        const values = data.map(d => parseInt(d.nb ?? d[1] ?? 0));
-
-        const ctx = document.getElementById('chartCommandes').getContext('2d');
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Commandes',
-                    data: values,
-                    backgroundColor: '#5C7A5C',
-                    borderRadius: 4,
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { display: false }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: { stepSize: 1 }
-                    }
-                }
-            }
-        });
-
+    //formatage labels : "2026-1"->"Jan 2026"
+    const moisNoms = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
+    const labelsMois = dataMois.map(d => {
+        const m = d._id?.mois ?? 1;
+        const a = d._id?.annee ?? 2026;
+        return moisNoms[m - 1] + ' ' + a;
     });
-    </script>
+    const valuesMois = dataMois.map(d => parseInt(d.nb ?? 0));
+
+    new Chart(document.getElementById('chartMois').getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: labelsMois,
+            datasets: [{
+                label: 'Commandes',
+                data: valuesMois,
+                backgroundColor: '#5C7A5C', // var(--vert)
+                borderRadius: 4,
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+        }
+    });
+
+    /*graphique menu +commandés->stats_by_menu depuis MongoDB*/
+    const dataMenus = {{ stats_by_menu|json_encode|raw }};
+
+    const labelsMenus = dataMenus.map(d => d.titre ?? 'Menu');
+    const valuesMenus = dataMenus.map(d => parseInt(d.nb_commandes ?? 0));
+
+    new Chart(document.getElementById('chartMenus').getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: labelsMenus,
+            datasets: [{
+                label: 'Commandes',
+                data: valuesMenus,
+                backgroundColor: '#C4693A', // var(--terre)
+                borderRadius: 4,
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } },
+            indexAxis: 'y', // Graphique horizontal — meilleure lisibilité
+        }
+    });
+
+});
+</script>
 {% endblock %}

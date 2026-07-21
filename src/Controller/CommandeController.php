@@ -9,6 +9,7 @@ namespace App\Controller;
 use App\Entity\Commande;
 use App\Entity\HistoriqueStatut;
 use App\Repository\MenuRepository;
+use App\Service\MongoDBService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,6 +21,13 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class CommandeController extends AbstractController
 {
     /**
+     * MongoDBService injecté via constructeur (injec° de dépendance)
+     *symfony instancie automtqmnt le service grâce à l'autowiring
+     */
+    public function __construct(
+        private MongoDBService $mongoDBService
+    ) {}
+     /**
      *formlaire commande pr un menu, 
      *calcul du prix : prix base = prix_menu × (nb_personnes / nb_personnes_min), réduction 10% si nb_personnes >= nb_personnes_min +5,  +5€ si ville != 'bordeaux'
      */
@@ -104,6 +112,18 @@ class CommandeController extends AbstractController
             $em->persist($commande);
             $em->persist($historique);
             $em->flush();
+            
+            //sauvegarde MongoDB (stats analytiques),composant MongoDB dédié, données dupliquées pr l'analytique sans impacter performances PostgreSQL
+            $this->mongoDBService->saveCommandeStat([
+                'id'              => $commande->getId(),
+                'numero_commande' => $numeroCommande,
+                'menu_id'         => $menu->getId(),
+                'menu_titre'      => $menu->getTitre(),
+                'prix_total'      => $prixTotal,
+                'nb_personnes'    => $nbPersonnes,
+                'ville_livraison' => $ville,
+                'statut'          => 'en_attente',
+            ]);
 
             //mail confirma° via Brevo cURL (feature/brevo)
             $this->sendEmailConfirmation($commande, $menu, $nbPersonnes, $prixTotal, $prixLivraison, $ville);
