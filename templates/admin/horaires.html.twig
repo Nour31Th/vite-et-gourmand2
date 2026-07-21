@@ -1,0 +1,62 @@
+{#comme employe/horaires mais routes admin #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des horaires — Vite & Gourmand{% endblock %}
+
+{% block page_css %}
+    <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
+{% endblock %}
+
+{% block body %}
+
+<div class="dashboard-bandeau">
+    <h1 class="dashboard-bandeau-titre">Gestion des horaires</h1>
+</div>
+
+<section class="section-dashboard">
+    <div class="container-xl px-4">
+
+        <div class="dashboard-onglets mb-4">
+            <a href="{{ path('app_admin_dashboard') }}" class="btn btn-sm btn-outline-secondary">Commandes</a>
+            <a href="{{ path('app_admin_employes') }}" class="btn btn-sm btn-outline-secondary">Employés</a>
+            <a href="{{ path('app_admin_avis') }}" class="btn btn-sm btn-outline-secondary">Avis</a>
+            <a href="{{ path('app_admin_stats') }}" class="btn btn-sm btn-outline-secondary">Statistiques</a>
+            <a href="{{ path('app_admin_horaires') }}" class="btn btn-sm btn-brun">Horaires</a>
+            <a href="{{ path('app_employe_menus') }}" class="btn btn-sm btn-outline-secondary">Menus</a>
+        </div>
+
+        <div class="commande-card" style="max-width:600px">
+            <form action="{{ path('app_admin_horaires') }}" method="post">
+                <input type="hidden" name="_token" value="{{ csrf_token('horaires') }}">
+
+                {% for horaire in horaires %}
+                    <div class="row align-items-center mb-3 pb-3 horaire-ligne">
+                        <div class="col-3">
+                            <span class="horaire-jour">{{ horaire.jour }}</span>
+                        </div>
+                        <div class="col-4">
+                            <label class="form-label small">Ouverture</label>
+                            <input type="time" name="ouverture_{{ horaire.id }}"
+                                   class="form-control form-control-sm"
+                                   value="{{ horaire.heureOuverture|date('H:i') }}">
+                        </div>
+                        <div class="col-4">
+                            <label class="form-label small">Fermeture</label>
+                            <input type="time" name="fermeture_{{ horaire.id }}"
+                                   class="form-control form-control-sm"
+                                   value="{{ horaire.heureFermeture|date('H:i') }}">
+                        </div>
+                    </div>
+                {% endfor %}
+
+                <div class="d-grid mt-3">
+                    <button type="submit" class="btn btn-vert">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

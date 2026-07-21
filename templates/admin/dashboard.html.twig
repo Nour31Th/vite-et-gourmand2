@@ -1,0 +1,156 @@
+{#dashboard admin, variables: commandes->ttles les commandes, statut_filtre->statut sélectionné#}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Espace Administrateur — Vite & Gourmand{% endblock %}
+
+{% block page_css %}
+    <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
+{% endblock %}
+
+{% block body %}
+
+<div class="dashboard-bandeau">
+    <h1 class="dashboard-bandeau-titre">Espace Administrateur</h1>
+</div>
+
+<section class="section-dashboard">
+    <div class="container-xl px-4">
+
+        {#onglets#}
+        <div class="dashboard-onglets mb-4">
+            <a href="{{ path('app_admin_dashboard') }}"
+               class="btn btn-sm {{ not statut_filtre ? 'btn-brun' : 'btn-outline-secondary' }}">
+                Commandes
+            </a>
+            <a href="{{ path('app_admin_employes') }}" class="btn btn-sm btn-outline-secondary">
+                Employés
+            </a>
+            <a href="{{ path('app_admin_avis') }}" class="btn btn-sm btn-outline-secondary">
+                Avis
+            </a>
+            <a href="{{ path('app_admin_stats') }}" class="btn btn-sm btn-outline-secondary">
+                Statistiques
+            </a>
+            <a href="{{ path('app_admin_horaires') }}" class="btn btn-sm btn-outline-secondary">
+                Horaires
+            </a>
+            <a href="{{ path('app_employe_menus') }}" class="btn btn-sm btn-outline-secondary">
+                Menus
+            </a>
+        </div>
+
+        {#fiiltre statut #}
+        <div class="dashboard-filtre mb-4">
+            <p class="dashboard-filtre-label">Filtrer par statut</p>
+            <div class="d-flex gap-2 flex-wrap">
+                <a href="{{ path('app_admin_dashboard') }}"
+                   class="btn btn-sm {{ not statut_filtre ? 'btn-brun' : 'btn-outline-secondary' }}">
+                    Tous
+                </a>
+                {% for statut in ['en_attente', 'validee', 'en_cours', 'terminee', 'retour_materiel', 'cloturee', 'annulee'] %}
+                    <a href="{{ path('app_admin_dashboard', {statut: statut}) }}"
+                       class="btn btn-sm {{ statut_filtre == statut ? 'btn-brun' : 'btn-outline-secondary' }}">
+                        {{ statut|replace({'_': ' '})|capitalize }}
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <p class="dashboard-compteur mb-3">
+            {{ commandes|length }} commande(s)
+            {% if statut_filtre %} — {{ statut_filtre|replace({'_': ' '})|capitalize }}{% endif %}
+        </p>
+
+        {% if commandes|length == 0 %}
+            <div class="dashboard-vide">
+                <p>Aucune commande.</p>
+            </div>
+        {% else %}
+            {% for commande in commandes %}
+                <div class="commande-employe-card mb-3">
+                    <div class="row g-3">
+
+                        <div class="col-12 col-lg-5">
+                            <div class="commande-employe-numero">{{ commande.numeroCommande }}</div>
+                            <div class="commande-employe-client">
+                                {{ commande.utilisateur.prenom }} {{ commande.utilisateur.nom }}
+                                <span class="commande-employe-email">— {{ commande.utilisateur.email }}</span>
+                            </div>
+                            <div class="commande-employe-menu">{{ commande.menu.titre }}</div>
+                            <div class="commande-employe-detail">
+                                {{ commande.datePrestation|date('d/m/Y') }}
+                                à {{ commande.heureLivraison|date('H:i') }}
+                            </div>
+                            <div class="commande-employe-detail">
+                                {{ commande.adresseLivraison }}, {{ commande.villeLivraison }}
+                            </div>
+                            <div class="commande-employe-detail">
+                                {{ commande.nbPersonnes }} personnes
+                                — <strong>{{ commande.prixTotal }} €</strong>
+                            </div>
+                            <div class="mt-2">
+                                <span class="badge badge-{{ commande.statut }}">
+                                    {{ commande.statut|replace({'_': ' '})|capitalize }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-lg-3">
+                            <p class="commande-employe-label">Historique</p>
+                            {% for historique in commande.historiqueStatuts %}
+                                <div class="historique-item">
+                                    <span class="badge badge-{{ historique.statut }} badge-sm">
+                                        {{ historique.statut|replace({'_': ' '})|capitalize }}
+                                    </span>
+                                    <span class="historique-date">
+                                        {{ historique.dateHeure|date('d/m H:i') }}
+                                    </span>
+                                    {% if historique.commentaire %}
+                                        <div class="historique-commentaire">{{ historique.commentaire }}</div>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="col-12 col-lg-4">
+                            <p class="commande-employe-label">Changer le statut</p>
+                            <form action="{{ path('app_admin_update_statut', {id: commande.id}) }}"
+                                  method="post">
+                                <input type="hidden" name="_token"
+                                       value="{{ csrf_token('statut_' ~ commande.id) }}">
+                                <select name="statut" class="form-select form-select-sm mb-2">
+                                    <option value="en_attente" {{ commande.statut == 'en_attente' ? 'selected' : '' }}>En attente</option>
+                                    <option value="validee" {{ commande.statut == 'validee' ? 'selected' : '' }}>Validée</option>
+                                    <option value="en_cours" {{ commande.statut == 'en_cours' ? 'selected' : '' }}>En cours</option>
+                                    <option value="terminee" {{ commande.statut == 'terminee' ? 'selected' : '' }}>Terminée</option>
+                                    <option value="retour_materiel" {{ commande.statut == 'retour_materiel' ? 'selected' : '' }}>Retour matériel</option>
+                                    <option value="cloturee" {{ commande.statut == 'cloturee' ? 'selected' : '' }}>Clôturée</option>
+                                    <option value="annulee" {{ commande.statut == 'annulee' ? 'selected' : '' }}>Annulée</option>
+                                </select>
+                                <select name="mode_contact" class="form-select form-select-sm mb-2">
+                                    <option value="">Mode de contact</option>
+                                    <option value="telephone">Téléphone</option>
+                                    <option value="email">Email</option>
+                                    <option value="sms">SMS</option>
+                                    <option value="aucun">Aucun</option>
+                                </select>
+                                <textarea name="commentaire"
+                                          class="form-control form-control-sm mb-2"
+                                          rows="2"
+                                          placeholder="Commentaire (optionnel)"></textarea>
+                                <button type="submit" class="btn btn-brun btn-sm w-100">
+                                    Mettre à jour
+                                </button>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+    </div>
+</section>
+
+{% endblock %}

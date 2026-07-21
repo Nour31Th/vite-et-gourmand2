@@ -100,9 +100,9 @@ small, .small  {
     color: var(--vert) !important;
 }
 .nav-link.active, { 
-    color: var(--vert) !important; 
-    font-weight: 700; 
-    border_bottom: 2px solid var(--vert);
+    color:var(--vert) !important; 
+    font-weight: 700 ; 
+    border_bottom : 2px solid var(--vert);
 }
 
 /* menu mobile fd blanc, bordure & ombre */
@@ -192,6 +192,28 @@ footer a:hover {
     padding: 2rem 0;
 }
 
+/*footer*/
+.footer-hr {
+    border-color: rgba(255,255,255,0.1);
+}
+
+/*lien footer sans style par défaut */
+footer .list-unstyled li a {
+    font-size: 13px;
+    color: #9A9A7A;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+footer .list-unstyled li a:hover {
+    color: var(--beige);
+}
+
+footer p.small {
+    font-size: 13px;
+    color: #9A9A7A;
+    margin: 0;
+}
 
 
 

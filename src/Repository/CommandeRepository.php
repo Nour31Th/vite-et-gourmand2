@@ -16,28 +16,18 @@ class CommandeRepository extends ServiceEntityRepository
         parent::__construct($registry, Commande::class);
     }
 
-//    /**
-//     * @return Commande[] Returns an array of Commande objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('c')
-//            ->andWhere('c.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('c.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?Commande
-//    {
-//        return $this->createQueryBuilder('c')
-//            ->andWhere('c.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    /*commande/mois pr stats admin, use par AdminController::stats() pr Chart.js
+     * @return array Ex: [['mois' => '2026-01', 'nb' => 12], ...]*/
+    public function findCommandesParMois(): array
+    {
+        return $this->createQueryBuilder('c')
+           ->select(
+             "SUBSTRING(CAST(c.dateCommande AS string), 1, 7) AS mois",
+             'COUNT(c.id) AS nb'
+           )
+           ->groupBy('mois')
+           ->orderBy('mois', 'ASC')
+           ->getQuery()
+           ->getResult();
+    }
 }

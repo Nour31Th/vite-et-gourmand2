@@ -1,0 +1,82 @@
+{#gestion employés, variable employes->tableau d'utilisateurs avec ROLE_EMPLOYE#}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des employés — Vite & Gourmand{% endblock %}
+
+{% block page_css %}
+    <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
+{% endblock %}
+
+{% block body %}
+
+<div class="dashboard-bandeau">
+    <h1 class="dashboard-bandeau-titre">Gestion des employés</h1>
+</div>
+
+<section class="section-dashboard">
+    <div class="container-xl px-4">
+
+        {#onglets#}
+        <div class="dashboard-onglets mb-4">
+            <a href="{{ path('app_admin_dashboard') }}" class="btn btn-sm btn-outline-secondary">Commandes</a>
+            <a href="{{ path('app_admin_employes') }}" class="btn btn-sm btn-brun">Employés</a>
+            <a href="{{ path('app_admin_avis') }}" class="btn btn-sm btn-outline-secondary">Avis</a>
+            <a href="{{ path('app_admin_stats') }}" class="btn btn-sm btn-outline-secondary">Statistiques</a>
+            <a href="{{ path('app_admin_horaires') }}" class="btn btn-sm btn-outline-secondary">Horaires</a>
+            <a href="{{ path('app_employe_menus') }}" class="btn btn-sm btn-outline-secondary">Menus</a>
+        </div>
+
+        {#btn créer employé #}
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <p class="dashboard-compteur mb-0">{{ employes|length }} employé(s)</p>
+            <a href="{{ path('app_admin_creer_employe') }}" class="btn btn-vert btn-sm">
+                + Créer un employé
+            </a>
+        </div>
+
+        {#liste employés#}
+        <div class="table-commandes">
+            {% if employes|length == 0 %}
+                <div class="dashboard-vide p-4">
+                    <p>Aucun employé enregistré.</p>
+                </div>
+            {% else %}
+                {% for employe in employes %}
+                    <div class="employe-item">
+                        <div class="row align-items-center g-3">
+                            <div class="col-12 col-lg-6">
+                                <div class="employe-nom">
+                                    {{ employe.prenom }} {{ employe.nom }}
+                                </div>
+                                <div class="employe-email">{{ employe.email }}</div>
+                                {% if employe.gsm %}
+                                    <div class="employe-gsm">{{ employe.gsm }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-12 col-lg-3">
+                                <span class="{{ employe.actif ? 'badge-actif' : 'badge-inactif' }}">
+                                    {{ employe.actif ? 'Actif' : 'Inactif' }}
+                                </span>
+                            </div>
+                            <div class="col-12 col-lg-3">
+                                <form action="{{ path('app_admin_activer_employe', {id: employe.id}) }}"
+                                      method="post">
+                                    <input type="hidden" name="_token"
+                                           value="{{ csrf_token('activer_' ~ employe.id) }}">
+                                    <button type="submit"
+                                            class="btn btn-sm {{ employe.actif ? 'btn-outline-danger' : 'btn-vert' }} w-100">
+                                        {{ employe.actif ? 'Désactiver' : 'Activer' }}
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}
