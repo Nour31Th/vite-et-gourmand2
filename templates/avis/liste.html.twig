@@ -1,0 +1,79 @@
+{#page publique avis clients, variable avis->tableau d'Avis validés (valide = true), triés DESC#}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Les avis clients — Vite & Gourmand{% endblock %}
+
+{% block page_css %}
+    {#home.css w/ styles cards avis #}
+    <link rel="stylesheet" href="{{ asset('css/home.css') }}">
+{% endblock %}
+
+{% block body %}
+
+{#bandeau comme page accueil #}
+<div class="hero-bandeau">
+    <h1 class="hero-titre">Les avis de nos clients</h1>
+</div>
+
+<section class="section-accueil section-bgclair" aria-labelledby="titre-avis">
+    <p class="section-label" id="titre-avis">Ce que vous pensez de nous !</p>
+    <p class="section-intro">
+        Votre satisfaction est notre plus belle récompense depuis 25 ans.
+        Tous nos avis sont vérifiés par notre équipe avant publication.
+    </p>
+
+    {% if avis|length == 0 %}
+        {#msg si 0 avis#}
+        <div class="dashboard-vide">
+            <p>Aucun avis pour le moment.</p>
+            <p class="small text-muted mt-2">
+                Passez une commande et partagez votre expérience !
+            </p>
+        </div>
+    {% else %}
+        <div class="row g-3">
+            {% for avi in avis %}
+                <div class="col-12 col-md-6 col-lg-3">
+                    <article class="avis-card">
+
+                        {#notes#}
+                        <div class="avis-etoiles"
+                             aria-label="{{ avi.note }} étoiles sur 5">
+                            {% for i in 1..5 %}
+                                <span class="{{ i <= avi.note ? 'etoile-pleine' : 'etoile-vide' }}">
+                                    {{ i <= avi.note ? '●' : '○' }}
+                                </span>
+                            {% endfor %}
+                        </div>
+
+                        {#commentaire cité#}
+                        <p class="avis-commentaire">« {{ avi.commentaire }} »</p>
+
+                        <hr class="avis-separateur">
+
+                        {#auteur#}
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="avis-initiales" aria-hidden="true">
+                                {{ avi.utilisateur.prenom|first }}{{ avi.utilisateur.nom|first }}
+                            </div>
+                            <div>
+                                <div class="avis-nom">
+                                    {{ avi.utilisateur.prenom }}
+                                    {{ avi.utilisateur.nom|slice(0,1) }}.
+                                </div>
+                                <div class="small text-muted">
+                                    {{ avi.dateAvis|date('d/m/Y') }}
+                                </div>
+                            </div>
+                        </div>
+
+                    </article>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+</section>
+
+{% endblock %}

@@ -1,84 +1,110 @@
 <?php
 
+//utilisateurs application, 3 types (client connecté, employé, admin)// 
 namespace App\Entity;
 
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
+/**
+ *ROLE_USER->client connecté, ROLE_EMPLOYE->employé (hérite de ROLE_USER), ROLE_ADMIN-> admin(hérite de ROLE_EMPLOYE et ROLE_USER)
+ *implémente 2 interfaces Symfony Security : UserInterface->méthodes requises système sécu, PasswordAuthenticatedUserInterface->indique que le mot de passe est hashé
+ *
+ * contraintes Validator : mail unique en bdd (UniqueEntity), mail valide (Assert\Email), nom et prénom obligatoires (Assert\NotBlank)
+ */
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
-#[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
+#[UniqueEntity(
+    fields: ['email'],
+    message: 'Cette adresse email est déjà utilisée.'
+)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    //id auto-incrémenté en bdd, généré automatiquement par PostgreSQL (SERIAL)
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 180)]
+    //mail->id unique ocnnex°, utilisé par symfony securitu pr idtfier utilisateur, défini dans security.yaml->property: email
+    #[ORM\Column(length: 180, unique: true)]
+    #[Assert\NotBlank(message: 'L\'email est obligatoire.')]
+    #[Assert\Email(message: 'L\'adresse email n\'est pas valide.')]
     private ?string $email = null;
 
-    /**
-     * @var list<string> The user roles
-     */
+    //rôles stockés en JSON dans colonne BDD, Ex: ["ROLE_ADMIN"] ou ["ROLE_EMPLOYE"] ou [], getRoles() ajoute tjrs ROLE_USER automatqmnt
     #[ORM\Column]
     private array $roles = [];
 
-    /**
-     * @var string The hashed password
-     */
+    //mdp hashé w/ bcrypt, jamais stocké en clair,hashé via UserPasswordHasherInterface
     #[ORM\Column]
     private ?string $password = null;
 
+    //nom de famille utilisateur
     #[ORM\Column(length: 50)]
+    #[Assert\NotBlank(message: 'Le nom est obligatoire.')]
+    #[Assert\Length(
+        max: 50,
+        maxMessage: 'Le nom ne peut pas dépasser {{ limit }} caractères.'
+    )]
     private ?string $nom = null;
 
+    //prénom utilisateur
     #[ORM\Column(length: 50)]
+    #[Assert\NotBlank(message: 'Le prénom est obligatoire.')]
+    #[Assert\Length(
+        max: 50,
+        maxMessage: 'Le prénom ne peut pas dépasser {{ limit }} caractères.'
+    )]
     private ?string $prenom = null;
 
+    // gsm en option, use pr commande
     #[ORM\Column(length: 20, nullable: true)]
     private ?string $gsm = null;
 
+    // adresse optionnelle, pré-remplie pr formulaire commande
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $adresse = null;
 
+    //ville optionnelle, pré-remplie pr formulaire commande
     #[ORM\Column(length: 100, nullable: true)]
     private ?string $ville = null;
 
+    //code postal en option
     #[ORM\Column(length: 10, nullable: true)]
-    private ?string $code_postal = null;
+    private ?string $codePostal = null;
 
+    // statut actif/inactif du compte, inactif=pas de connexion, géré par admin via AdminController::activerEmploye() et vérifpar UserCheckerListener avt chaque conneion
     #[ORM\Column]
-    private ?bool $actif = null;
+    private bool $actif = true;
 
-    /**
-     * @var Collection<int, Commande>
-     */
-    #[ORM\OneToMany(targetEntity: Commande::class, mappedBy: 'utilisateur')]
+    //commandes faites par utilisateur, OneToMany->utilisateur peut avoir plusieurs commandes, mappedBy->propriété 'utilisateur' dans Commande pointe vers User
+    #[ORM\OneToMany(mappedBy: 'utilisateur', targetEntity: Commande::class)]
     private Collection $commandes;
 
-    /**
-     * @var Collection<int, Avis>
-     */
-    #[ORM\OneToMany(targetEntity: Avis::class, mappedBy: 'utilisateur')]
+    //avis utilisateur,OneToMany->utilisateur peut avoir plusieurs avis
+    #[ORM\OneToMany(mappedBy: 'utilisateur', targetEntity: Avis::class)]
     private Collection $avis;
 
-    /**
-     * @var Collection<int, ResetPasswordToken>
-     */
-    #[ORM\OneToMany(targetEntity: ResetPasswordToken::class, mappedBy: 'utilisateur')]
+    //tokens réinitialisa° mdp, OneToMany->utilisateur peut avoir plusieurs tokens (en pratique 1 seul actif à la fois, anciens suppr)
+    #[ORM\OneToMany(mappedBy: 'utilisateur', targetEntity: ResetPasswordToken::class)]
     private Collection $resetPasswordTokens;
 
+    //constructeur initialise collections Doctrine, ArrayCollection-> collection par défaut de Doctrine qui doit être initialisée dans le constructeur
     public function __construct()
     {
-        $this->commandes = new ArrayCollection();
-        $this->avis = new ArrayCollection();
+        $this->commandes           = new ArrayCollection();
+        $this->avis                = new ArrayCollection();
         $this->resetPasswordTokens = new ArrayCollection();
     }
+
+    //getters et setters ici
 
     public function getId(): ?int
     {
@@ -93,45 +119,32 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setEmail(string $email): static
     {
         $this->email = $email;
-
         return $this;
     }
 
-    /**
-     * A visual identifier that represents this user.
-     *
-     * @see UserInterface
-     */
+    //getUserIdentifier retourne id de l'utilisateur, requis par UserInterface, symfony security use valeur pr idtfier utilisateur en session, id=email.
     public function getUserIdentifier(): string
     {
         return (string) $this->email;
     }
 
-    /**
-     * @see UserInterface
-     */
+    //getRoles retourne rôles utilisateur, requis par UserInterface//
+    //ici tjrs ajout ROLE_USER à la liste, même utilisateur sans rôle explicite a ROLE_USER
+    //array_unique() évite doublons si ROLE_USER déjà dans $roles
     public function getRoles(): array
     {
-        $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
+        $roles   = $this->roles;
         $roles[] = 'ROLE_USER';
-
         return array_unique($roles);
     }
 
-    /**
-     * @param list<string> $roles
-     */
     public function setRoles(array $roles): static
     {
         $this->roles = $roles;
-
         return $this;
     }
 
-    /**
-     * @see PasswordAuthenticatedUserInterface
-     */
+    //getPassword retourne mdp hashé requis par PasswordAuthenticatedUserInterface
     public function getPassword(): ?string
     {
         return $this->password;
@@ -140,19 +153,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPassword(string $password): static
     {
         $this->password = $password;
-
         return $this;
     }
 
-    /**
-     * Ensure the session doesn't contain actual password hashes by CRC32C-hashing them, as supported since Symfony 7.3.
-     */
-    public function __serialize(): array
+    //eraseCredentials efface données sensibles temporaires, requis par UserInterface
+    //vide ici var stocke pas mdp en clair
+    public function eraseCredentials(): void
     {
-        $data = (array) $this;
-        $data["\0".self::class."\0password"] = hash('crc32c', $this->password);
-
-        return $data;
+        //rien à effacer car mdp en clair jamais stocké
     }
 
     public function getNom(): ?string
@@ -163,7 +171,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setNom(string $nom): static
     {
         $this->nom = $nom;
-
         return $this;
     }
 
@@ -175,7 +182,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPrenom(string $prenom): static
     {
         $this->prenom = $prenom;
-
         return $this;
     }
 
@@ -187,7 +193,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setGsm(?string $gsm): static
     {
         $this->gsm = $gsm;
-
         return $this;
     }
 
@@ -199,7 +204,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setAdresse(?string $adresse): static
     {
         $this->adresse = $adresse;
-
         return $this;
     }
 
@@ -211,23 +215,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setVille(?string $ville): static
     {
         $this->ville = $ville;
-
         return $this;
     }
 
     public function getCodePostal(): ?string
     {
-        return $this->code_postal;
+        return $this->codePostal;
     }
 
-    public function setCodePostal(?string $code_postal): static
+    public function setCodePostal(?string $codePostal): static
     {
-        $this->code_postal = $code_postal;
-
+        $this->codePostal = $codePostal;
         return $this;
     }
 
-    public function isActif(): ?bool
+    //isActif retourne statut actif/inactif, vérif  UserCheckerListener à chaque connexion
+    public function isActif(): bool
     {
         return $this->actif;
     }
@@ -235,97 +238,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setActif(bool $actif): static
     {
         $this->actif = $actif;
-
         return $this;
     }
 
-    /**
-     * @return Collection<int, Commande>
-     */
+    //getCommandes retourne ttes les commandes de l'utilisateur utilisé ds UserController::dashboard()
     public function getCommandes(): Collection
     {
         return $this->commandes;
     }
 
-    public function addCommande(Commande $commande): static
-    {
-        if (!$this->commandes->contains($commande)) {
-            $this->commandes->add($commande);
-            $commande->setUtilisateur($this);
-        }
-
-        return $this;
-    }
-
-    public function removeCommande(Commande $commande): static
-    {
-        if ($this->commandes->removeElement($commande)) {
-            // set the owning side to null (unless already changed)
-            if ($commande->getUtilisateur() === $this) {
-                $commande->setUtilisateur(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Avis>
-     */
+    //getAvis retourne ts les avis utilisateurs
     public function getAvis(): Collection
     {
         return $this->avis;
     }
 
-    public function addAvi(Avis $avi): static
-    {
-        if (!$this->avis->contains($avi)) {
-            $this->avis->add($avi);
-            $avi->setUtilisateur($this);
-        }
-
-        return $this;
-    }
-
-    public function removeAvi(Avis $avi): static
-    {
-        if ($this->avis->removeElement($avi)) {
-            // set the owning side to null (unless already changed)
-            if ($avi->getUtilisateur() === $this) {
-                $avi->setUtilisateur(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, ResetPasswordToken>
-     */
+    // getResetPasswordTokens retourne tokens de réinitialisa°
     public function getResetPasswordTokens(): Collection
     {
         return $this->resetPasswordTokens;
-    }
-
-    public function addResetPasswordToken(ResetPasswordToken $resetPasswordToken): static
-    {
-        if (!$this->resetPasswordTokens->contains($resetPasswordToken)) {
-            $this->resetPasswordTokens->add($resetPasswordToken);
-            $resetPasswordToken->setUtilisateur($this);
-        }
-
-        return $this;
-    }
-
-    public function removeResetPasswordToken(ResetPasswordToken $resetPasswordToken): static
-    {
-        if ($this->resetPasswordTokens->removeElement($resetPasswordToken)) {
-            // set the owning side to null (unless already changed)
-            if ($resetPasswordToken->getUtilisateur() === $this) {
-                $resetPasswordToken->setUtilisateur(null);
-            }
-        }
-
-        return $this;
     }
 }

@@ -22,6 +22,7 @@ security:
         
         #pare-feu principal qui gère tte l'appli
         main:
+            user_checker: App\EventListener\UserCheckerListener
             lazy: true                         #Charge l'utilisateur uniquement si nécessaire
             provider: app_user_provider        #Utilise le provider défini au-dessus 
 
