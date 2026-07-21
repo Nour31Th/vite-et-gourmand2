@@ -1,0 +1,78 @@
+{#page gestion menus, variable menus->tableau de Menu[] actifs#}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des menus — Vite & Gourmand{% endblock %}
+
+{% block page_css %}
+    <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
+{% endblock %}
+
+{% block body %}
+
+<div class="dashboard-bandeau">
+    <h1 class="dashboard-bandeau-titre">Gestion des menus</h1>
+</div>
+
+<section class="section-dashboard">
+    <div class="container-xl px-4">
+
+        {#onglets#}
+        <div class="dashboard-onglets mb-4">
+            <a href="{{ path('app_employe_dashboard') }}" class="btn btn-sm btn-outline-secondary">Commandes</a>
+            <a href="{{ path('app_employe_avis') }}" class="btn btn-sm btn-outline-secondary">Avis</a>
+            <a href="{{ path('app_employe_horaires') }}" class="btn btn-sm btn-outline-secondary">Horaires</a>
+            <a href="{{ path('app_employe_menus') }}" class="btn btn-sm btn-brun">Menus</a>
+        </div>
+
+        <div class="table-commandes">
+            <table class="table mb-0">
+                <thead>
+                    <tr>
+                        <th>Menu</th>
+                        <th>Thème</th>
+                        <th>Prix</th>
+                        <th>Min pers.</th>
+                        <th>Stock</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for menu in menus %}
+                        <tr>
+                            <td class="fw-bold">{{ menu.titre }}</td>
+                            <td class="small">{{ menu.theme }}</td>
+                            <td>{{ menu.prix }} €</td>
+                            <td>{{ menu.nbPersonnesMin }}</td>
+                            <td>{{ menu.stock >= 9999 ? 'Illimité' : menu.stock }}</td>
+                            <td>
+                                <div class="d-flex gap-1">
+                                    <a href="{{ path('app_employe_modifier_menu', {id: menu.id}) }}"
+                                       class="btn btn-outline-secondary btn-sm">
+                                        Modifier
+                                    </a>
+                                    <a href="{{ path('app_employe_plats_menu', {id: menu.id}) }}"
+                                       class="btn btn-outline-secondary btn-sm">
+                                        Plats
+                                    </a>
+                                    <form action="{{ path('app_employe_supprimer_menu', {id: menu.id}) }}"
+                                          method="post"
+                                          onsubmit="return confirm('Désactiver ce menu ?')">
+                                        <input type="hidden" name="_token"
+                                               value="{{ csrf_token('supprimer_menu_' ~ menu.id) }}">
+                                        <button type="submit" class="btn btn-outline-danger btn-sm">
+                                            Désactiver
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

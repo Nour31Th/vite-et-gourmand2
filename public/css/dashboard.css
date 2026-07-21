@@ -213,7 +213,175 @@
     color: var(--grisl); 
     margin-bottom: 4px; 
 }
-    
+
+/*espace employé*/
+
+/*nav employé */
+.employe-nav {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/*card commande employé */
+.commande-employe-card {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    border: 0.5px solid #e0ddd5;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.commande-employe-numero {
+    font-family: 'Lexend', sans-serif;
+    font-size: 11px;
+    color: var(--grisl);
+    margin-bottom: 4px;
+}
+
+.commande-employe-client {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--brun);
+    margin-bottom: 4px;
+}
+
+.commande-employe-menu {
+    font-family: 'Poppins', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--brun);
+    margin-bottom: 6px;
+}
+
+.commande-employe-detail {
+    font-size: 12px;
+    color: var(--grisl);
+    margin-bottom: 2px;
+}
+
+.commande-employe-label {
+    font-family: 'Lexend', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--grisl);
+    margin-bottom: 8px;
+}
+
+/*historique statuts */
+.historique-item {
+    margin-bottom: 6px;
+    font-size: 11px;
+}
+
+.historique-date {
+    color: var(--grisl);
+    margin-left: 4px;
+}
+
+.historique-commentaire {
+    color: var(--grisl);
+    font-style: italic;
+    margin-top: 2px;
+    padding-left: 4px;
+}
+
+/*filtre dashboard */
+.dashboard-filtre {
+    background: white;
+    border-radius: 8px;
+    padding: 16px;
+    border: 0.5px solid #e0ddd5;
+}
+
+/*card avis employé */
+.avis-employe-card {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    border: 0.5px solid #e0ddd5;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.avis-commentaire-employe {
+    font-size: 14px;
+    color: var(--brun);
+    font-style: italic;
+    margin-bottom: 8px;
+    line-height: 1.6;
+}
+
+.avis-meta {
+    font-size: 12px;
+    color: var(--grisl);
+}
+
+.avis-meta-commande {
+    font-size: 11px;
+    color: var(--grisl);
+    margin-top: 2px;
+}
+
+/*horaires */
+.horaire-ligne {
+    border-bottom: 0.5px solid #e0ddd5;
+}
+
+.horaire-jour {
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--brun);
+}
+
+/*style bandeau dashboard*/
+.dashboard-bandeau {
+    background-color: var(--brun);
+    padding: 20px;
+    text-align: center;
+}
+
+.dashboard-bandeau-titre {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 30px;
+    font-weight: 700;
+    color: white;
+    margin: 0;
+}
+
+/*onglets nav dashboard */
+.dashboard-onglets {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/*filtre statut */
+.dashboard-filtre {
+    background: white;
+    border-radius: 8px;
+    padding: 16px;
+    border: 0.5px solid #e0ddd5;
+}
+
+.dashboard-filtre-label {
+    font-family: 'Lexend', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--grisl);
+    margin-bottom: 8px;
+}
+
+/*compteur résultats */
+.dashboard-compteur {
+    font-family: 'Lexend', sans-serif;
+    font-size: 12px;
+    color: var(--grisl);
+}
     
 
     

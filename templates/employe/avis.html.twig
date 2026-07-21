@@ -1,0 +1,87 @@
+{#page gestion avis, variable avis->tableau avis pas validés#}
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des avis — Vite & Gourmand{% endblock %}
+
+{% block page_css %}
+    <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
+{% endblock %}
+
+{% block body %}
+
+<div class="dashboard-bandeau">
+    <h1 class="dashboard-bandeau-titre">Gestion des avis</h1>
+</div>
+
+<section class="section-dashboard">
+    <div class="container-xl px-4">
+
+        {#onglets #}
+        <div class="dashboard-onglets mb-4">
+            <a href="{{ path('app_employe_dashboard') }}" class="btn btn-sm btn-outline-secondary">Commandes</a>
+            <a href="{{ path('app_employe_avis') }}" class="btn btn-sm btn-brun">Avis</a>
+            <a href="{{ path('app_employe_horaires') }}" class="btn btn-sm btn-outline-secondary">Horaires</a>
+            <a href="{{ path('app_employe_menus') }}" class="btn btn-sm btn-outline-secondary">Menus</a>
+        </div>
+
+        <p class="dashboard-compteur mb-3">
+            Avis en attente de validation ({{ avis|length }})
+        </p>
+
+        {% if avis|length == 0 %}
+            <div class="dashboard-vide">
+                <p>Aucun avis en attente de validation.</p>
+            </div>
+        {% else %}
+            {% for avi in avis %}
+                <div class="avis-employe-card mb-3">
+                    <div class="row align-items-center g-3">
+                        <div class="col-12 col-lg-8">
+                            <div class="avis-etoiles mb-1" aria-label="{{ avi.note }} étoiles sur 5">
+                                {% for i in 1..5 %}
+                                    <span class="{{ i <= avi.note ? 'etoile-pleine' : 'etoile-vide' }}">★</span>
+                                {% endfor %}
+                                <span class="ms-1 small text-muted">{{ avi.note }}/5</span>
+                            </div>
+                            <p class="avis-commentaire-employe">« {{ avi.commentaire }} »</p>
+                            <div class="avis-meta">
+                                <strong>{{ avi.utilisateur.prenom }} {{ avi.utilisateur.nom }}</strong>
+                                — {{ avi.dateAvis|date('d/m/Y à H:i') }}
+                            </div>
+                            {% if avi.commande %}
+                                <div class="avis-meta-commande">
+                                    Commande {{ avi.commande.numeroCommande }}
+                                    — {{ avi.commande.menu.titre }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-12 col-lg-4">
+                            <div class="d-flex gap-2">
+                                <form action="{{ path('app_employe_valider_avis', {id: avi.id}) }}"
+                                      method="post" class="flex-grow-1">
+                                    <input type="hidden" name="_token"
+                                           value="{{ csrf_token('valider_avis_' ~ avi.id) }}">
+                                    <button type="submit" class="btn btn-vert btn-sm w-100">
+                                        ✓ Valider
+                                    </button>
+                                </form>
+                                <form action="{{ path('app_employe_refuser_avis', {id: avi.id}) }}"
+                                      method="post" class="flex-grow-1"
+                                      onsubmit="return confirm('Supprimer cet avis ?')">
+                                    <input type="hidden" name="_token"
+                                           value="{{ csrf_token('refuser_avis_' ~ avi.id) }}">
+                                    <button type="submit" class="btn btn-outline-danger btn-sm w-100">
+                                        ✗ Refuser
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+    </div>
+</section>
+
+{% endblock %}
