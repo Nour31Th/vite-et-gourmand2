@@ -1,0 +1,141 @@
+{#tableau de bord client, variables: user ->obj User connecté,commandes->tableau Commande[] de l'utilisateur (tri DESC)#}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon espace — Vite & Gourmand{% endblock %}
+
+{% block page_css %}
+    <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
+{% endblock %}
+
+{% block body %}
+
+{#titre #}
+<div class="hero-bandeau-page">
+    <h1 class="hero-bandeau-titre">Mon espace</h1>
+</div>
+
+<section class="section-dashboard">
+    <div class="container-xl px-4">
+
+        {#infos perso#}
+        <div class="dashboard-infos mb-4">
+            <p class="section-label">Mes informations</p>
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <div class="dashboard-info-item">
+                        <div class="dashboard-info-label">Nom</div>
+                        <div class="dashboard-info-value">{{ user.prenom }} {{ user.nom }}</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="dashboard-info-item">
+                        <div class="dashboard-info-label">Email</div>
+                        <div class="dashboard-info-value">{{ user.email }}</div>
+                    </div>
+                </div>
+                {% if user.gsm %}
+                <div class="col-md-3">
+                    <div class="dashboard-info-item">
+                        <div class="dashboard-info-label">Téléphone</div>
+                        <div class="dashboard-info-value">{{ user.gsm }}</div>
+                    </div>
+                </div>
+                {% endif %}
+                {% if user.ville %}
+                <div class="col-md-3">
+                    <div class="dashboard-info-item">
+                        <div class="dashboard-info-label">Ville</div>
+                        <div class="dashboard-info-value">{{ user.ville }}</div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        {#mes commandes#}
+        <p class="section-label">Mes commandes</p>
+
+        {% if commandes|length == 0 %}
+            <div class="dashboard-vide">
+                <p>Vous n'avez pas encore passé de commande.</p>
+                <a href="{{ path('app_menu_index') }}" class="btn btn-vert mt-3">
+                    Découvrir nos menus
+                </a>
+            </div>
+        {% else %}
+            <div class="table-commandes">
+                <table class="table mb-0">
+                    <thead>
+                        <tr>
+                            <th>Numéro</th>
+                            <th>Menu</th>
+                            <th>Date prestation</th>
+                            <th>Heure</th>
+                            <th>Personnes</th>
+                            <th>Total</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for commande in commandes %}
+                            <tr>
+                                <td class="small fw-bold">{{ commande.numeroCommande }}</td>
+                                <td>{{ commande.menu.titre }}</td>
+                                <td>{{ commande.datePrestation|date('d/m/Y') }}</td>
+                                <td>{{ commande.heureLivraison|date('H:i') }}</td>
+                                <td>{{ commande.nbPersonnes }} pers.</td>
+                                <td><strong>{{ commande.prixTotal }} €</strong></td>
+                                <td>
+                                    {#statuts w/couleurs#}
+                                    <span class="badge badge-{{ commande.statut }}">
+                                        {{ commande.statut|replace({'_': ' '})|capitalize }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="d-flex flex-column gap-1">
+
+                                        {#modif commande en_attente #}
+                                        {% if commande.statut == 'en_attente' %}
+                                            <a href="{{ path('app_user_modifier_commande', {id: commande.id}) }}"
+                                               class="btn btn-outline-secondary btn-sm">
+                                                Modifier
+                                            </a>
+                                        {% endif %}
+
+                                        {#annuler commande en_attente w/ CSRF #}
+                                        {% if commande.statut == 'en_attente' %}
+                                            <form action="{{ path('app_user_annuler_commande', {id: commande.id}) }}"
+                                                  method="post"
+                                                  onsubmit="return confirm('Confirmer l\'annulation ?')">
+                                                <input type="hidden"
+                                                       name="_token"
+                                                       value="{{ csrf_token('annuler_' ~ commande.id) }}">
+                                                <button type="submit" class="btn btn-outline-danger btn-sm w-100">
+                                                    Annuler
+                                                </button>
+                                            </form>
+                                        {% endif %}
+
+                                        {#avis commande terminée #}
+                                        {% if commande.statut == 'terminee' %}
+                                            <a href="{{ path('app_user_avis', {commandeId: commande.id}) }}"
+                                               class="btn btn-vert btn-sm">
+                                                Laisser un avis
+                                            </a>
+                                        {% endif %}
+
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+
+    </div>
+</section>
+
+{% endblock %}

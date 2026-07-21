@@ -1,0 +1,89 @@
+{#page formulaire dépôt d'avis, variable: commande->obj Commande pr laquelle avis déposé#}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Laisser un avis — Vite & Gourmand{% endblock %}
+
+{% block page_css %}
+    <link rel="stylesheet" href="{{ asset('css/forms.css') }}">
+{% endblock %}
+
+{% block body %}
+
+<div class="hero-bandeau-page">
+    <h1 class="hero-bandeau-titre">Laisser un avis</h1>
+</div>
+
+<section class="section-commande">
+    <div class="container-xl px-4">
+
+        <a href="{{ path('app_user_dashboard') }}" class="lien-retour">
+            Retour à mes commandes
+        </a>
+
+        <div class="row justify-content-center mt-3">
+            <div class="col-12 col-md-8 col-lg-6">
+                <div class="commande-card">
+
+                    {# Rappel de la commande concernée #}
+                    <div class="mb-4 p-3 bg-light rounded">
+                        <p class="mb-1 small text-muted">Commande</p>
+                        <p class="mb-1"><strong>{{ commande.menu.titre }}</strong></p>
+                        <p class="mb-0 small text-muted">
+                            Prestation du {{ commande.datePrestation|date('d/m/Y') }}
+                        </p>
+                    </div>
+
+                    <form action="{{ path('app_user_avis', {commandeId: commande.id}) }}"
+                          method="post">
+
+                        {#token csrf #}
+                        <input type="hidden"
+                               name="_token"
+                               value="{{ csrf_token('avis_' ~ commande.id) }}">
+
+                        {#note#}
+                        <div class="mb-4">
+                            <label class="form-label">Note * (de 1 à 5)</label>
+                            <div class="d-flex gap-3">
+                                {% for i in 1..5 %}
+                                    <div class="form-check">
+                                        <input class="form-check-input"
+                                               type="radio"
+                                               name="note"
+                                               id="note{{ i }}"
+                                               value="{{ i }}"
+                                               required>
+                                        <label class="form-check-label" for="note{{ i }}">
+                                            {{ i }} ★
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        {#commentaire#}
+                        <div class="mb-4">
+                            <label for="commentaire" class="form-label">Commentaire *</label>
+                            <textarea id="commentaire"
+                                      name="commentaire"
+                                      class="form-control"
+                                      rows="5"
+                                      placeholder="Partagez votre expérience..."
+                                      required></textarea>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-vert">
+                                Envoyer mon avis
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

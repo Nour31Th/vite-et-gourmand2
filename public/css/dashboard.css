@@ -153,6 +153,66 @@
      font-size: 0.8rem; 
      font-weight: 600; 
 }
+
+/*infos perso*/
+.section-dashboard { 
+    padding: 48px 0; 
+    background-color: var(--bgclair); 
+}
+
+.dashboard-infos { 
+    background: white; 
+    border-radius: 8px; 
+    padding: 24px; 
+    border: 0.5px solid #e0ddd5; 
+}
+
+.dashboard-info-item { 
+    padding: 8px 0; 
+}
+
+.dashboard-info-label { 
+    font-family: 'Lexend', sans-serif; 
+    font-size: 11px; 
+    color: var(--grisl); 
+    text-transform: uppercase; 
+    letter-spacing: 0.5px; 
+}
+
+.dashboard-info-value { 
+    font-size: 14px; 
+    font-weight: 600; 
+    color: var(--brun); 
+    margin-top: 2px; 
+}
+
+/*vide*/
+.dashboard-vide { 
+    text-align: center; 
+    padding: 48px; 
+    background: white; 
+    border-radius: 8px; 
+    border: 0.5px solid #e0ddd5; 
+}
+
+/*label sect°*/
+.section-label { 
+    font-family: 'Montserrat', sans-serif; 
+    font-size: 13px; 
+    font-weight: 700; 
+    letter-spacing: 1.5px; 
+    text-transform: uppercase; 
+    color: var(--brun); 
+    margin-bottom: 16px; 
+}
+
+/*recap menu dans modifier_commande */
+.recap-menu-label { 
+    font-family: 'Lexend', sans-serif; 
+    font-size: 11px; 
+    color: var(--grisl); 
+    margin-bottom: 4px; 
+}
     
     
 
