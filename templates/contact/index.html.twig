@@ -1,0 +1,129 @@
+{#page contact#}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Contact — Vite & Gourmand{% endblock %}
+
+{% block page_css %}
+    <link rel="stylesheet" href="{{ asset('css/forms.css') }}">
+{% endblock %}
+
+{% block body %}
+
+{#titre#}
+<div class="hero-bandeau">
+    <h1 class="hero-titre">Contact</h1>
+</div>
+
+<section class="section-contact">
+    <div class="container-xl px-4">
+        <div class="row g-5">
+
+            {#formulaire#}
+            <div class="col-12 col-lg-7">
+                <div class="commande-card">
+                    <h2 class="commande-section-titre">Envoyez-nous un message</h2>
+
+                    <form action="{{ path('app_contact') }}" method="post">
+
+                        {#token csrf#}
+                        <input type="hidden"
+                               name="_token"
+                               value="{{ csrf_token('contact') }}">
+
+                        {#obj msg#}
+                        <div class="mb-3">
+                            <label for="titre" class="form-label">Sujet *</label>
+                            <input type="text"
+                                   id="titre"
+                                   name="titre"
+                                   class="form-control"
+                                   placeholder="Objet de votre message"
+                                   required>
+                        </div>
+
+                        {#mail expedteur#}
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Votre email *</label>
+                            <input type="email"
+                                   id="email"
+                                   name="email"
+                                   class="form-control"
+                                   placeholder="votre@email.fr"
+                                   autocomplete="email"
+                                   required>
+                        </div>
+
+                        {#msg#}
+                        <div class="mb-4">
+                            <label for="description" class="form-label">Message *</label>
+                            <textarea id="description"
+                                      name="description"
+                                      class="form-control"
+                                      rows="6"
+                                      placeholder="Votre message..."
+                                      required></textarea>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-vert">
+                                Envoyer le message
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+            {#info contact#}
+            <div class="col-12 col-lg-5">
+                <div class="contact-infos">
+                    <h2 class="commande-section-titre">Nos coordonnées</h2>
+
+                    <div class="contact-info-item">
+                        <div class="contact-info-label">Email</div>
+                        <div class="contact-info-value">contact@viteetgourmand.fr</div>
+                    </div>
+
+                    <div class="contact-info-item">
+                        <div class="contact-info-label">Adresse</div>
+                        <div class="contact-info-value">
+                            Bordeaux, Gironde<br>
+                            Livraison dans toute la métropole bordelaise
+                        </div>
+                    </div>
+
+                    <div class="contact-info-item">
+                        <div class="contact-info-label">Horaires</div>
+                        <div class="contact-info-value">
+                            {% if horaires is defined and horaires|length > 0 %}
+                                {% for horaire in horaires %}
+                                    <div>
+                                        <strong>{{ horaire.jour }}</strong> :
+                                        {% if horaire.heureOuverture|date('H:i') == '00:00' %}
+                                            Fermé
+                                        {% else %}
+                                            {{ horaire.heureOuverture|date('H:i') }}
+                                            – {{ horaire.heureFermeture|date('H:i') }}
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="contact-info-item">
+                        <div class="contact-info-label">Livraison</div>
+                        <div class="contact-info-value">
+                            Gratuite à Bordeaux<br>
+                            +5 € dans les autres communes de la métropole
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+{% endblock %}
