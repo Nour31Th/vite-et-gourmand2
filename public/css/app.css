@@ -94,15 +94,15 @@ small, .small  {
 /* lien navbar brun, souligné vert pr survol et actif */
 .nav-link { 
     font-family:'Lato', sans-serif; 
-    color: var(--brun)!important;
+    color: var(--brun);
 }
 .nav-link:hover {
-    color: var(--vert) !important;
+    color: var(--vert);
 }
-.nav-link.active, { 
-    color:var(--vert) !important; 
+.nav-link.active { 
+    color: var(--vert); 
     font-weight: 700 ; 
-    border_bottom : 2px solid var(--vert);
+    border-bottom: 2px solid var(--vert);
 }
 
 /* menu mobile fd blanc, bordure & ombre */
@@ -193,27 +193,85 @@ footer a:hover {
 }
 
 /*footer*/
+/* footer hr */
 .footer-hr {
     border-color: rgba(255,255,255,0.1);
 }
 
-/*lien footer sans style par défaut */
-footer .list-unstyled li a {
+/* liens footer directs (pas dans li) */
+footer a {
     font-size: 13px;
     color: #9A9A7A;
     text-decoration: none;
+    display: block;
+    margin-bottom: 4px;
     transition: color 0.2s ease;
 }
 
-footer .list-unstyled li a:hover {
+footer a:hover {
     color: var(--beige);
 }
 
-footer p.small {
+footer p {
     font-size: 13px;
     color: #9A9A7A;
+    margin-bottom: 4px;
+}
+
+/* copyright */
+.footer-copyright {
+    font-size: 12px;
+    color: #6B6B5A;
+    text-align: center;
     margin: 0;
 }
 
+/* brand footer */
+.footer-brand {
+    font-family: 'Poppins', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--beige);
+    margin-bottom: 8px;
+    display: block;
+}
+
+/* newsletter input dans footer */
+footer .form-control {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: white;
+}
+
+footer .form-control::placeholder {
+    color: rgba(255,255,255,0.5);
+}
+
+/*classes home.css, menu.css, dashboard.css */
+
+/*home/index.html.twig */
+.section-bgclair  { background-color: var(--bgclair); }
+.section-white    { background-color: white; }
+.section-accueil  { padding: 48px 80px; }
+
+/*dashboard templates */
+.section-dashboard { padding: 48px 0; background-color: var(--bgclair); }
+
+/*label uppercase commun à plusieurs pages */
+.section-label {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--brun);
+    margin-bottom: 16px;
+}
+
+/*responsive*/
+@media (max-width: 768px) {
+    .section-accueil { padding: 32px 16px; }
+    .section-dashboard { padding: 32px 16px; }
+}
 
 

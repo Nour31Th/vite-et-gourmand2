@@ -19,7 +19,7 @@
         <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Poppins:wght@400;600&family=Open+Sans:wght@600&family=Lato:wght@400;700&family=Roboto:wght@700&family=Lexend:wght@400;500&display=swap" rel="stylesheet">
         
         {# css bootstrap5 w/ cdn #} 
-        <link href ="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel=stylesheet"> 
+        <link href ="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"> 
         
         {#fichier css de tte l'appli#}
         <link rel="stylesheet" href="{{ asset('css/app.css') }}">
@@ -53,89 +53,113 @@
                     class="navbar-logo-img">
                </a>
 
-               {# menu desktop#}
-               <ul class="navbar-nav ms-auto gap-3 align-items-center d-none d-lg-flex">
-                   <li class="nav-item">
-                       <a href="{{ path('app_home') }}" class="nav-link">Accueil</a>
-                   </li>
-                   <li class="nav-item">
-                       <a href="{{ path('app_menu_index') }}" class="nav-link">Nos menus</a>
-                   </li>
-                   <li class="nav-item">
-                       <a href="{{ path('app_contact') }}" class="nav-link">Contact</a>
-                   </li>
-                     {% if app.user %}
-                         {% if is_granted('ROLE_ADMIN') %}
-                            <li class="nav-item">
-                                <a href="{{ path('app_admin_dashboard') }}" class="nav-link">Admin</a>
-                            </li>
-                        {% elseif is_granted('ROLE_EMPLOYE') %}
-                           <li class="nav-item">
-                                <a href="{{ path('app_employe_dashboard') }}" class="nav-link">Employé</a>
-                           </li>
-                        {% else %}
-                           <li class="nav-item">
-                                <a href="{{ path('app_user_dashboard') }}" class="nav-link">Mon espace</a>
-                           </li>
-                        {% endif %}
-                           <li class="nav-item">
-                                <a href="{{ path('app_logout') }}" class="btn btn-brun btn-sm">Déconnexion</a>
-                           </li>
-                       {% else %}
-                           <li class="nav-item">
-                                <a href="{{ path('app_login') }}" class="nav-link">Connexion</a>
-                           </li>
-                           <li class="nav-item">
-                                <a href="{{ path('app_register') }}" class="btn btn-vert btn-sm">S'inscrire</a>
-                           </li>
-                     {% endif %}
-                </ul>
+               {#menu desktop#}
+               <ul class="navbar-nav gap-2 align-items-center d-none d-lg-flex">
+                <li class="nav-item">
+                    <a href="{{ path('app_home') }}" class="nav-link">Accueil</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ path('app_menu_index') }}" class="nav-link">Nos menus</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ path('app_avis_liste') }}" class="nav-link">Vos avis</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ path('app_contact') }}" class="nav-link">Contact</a>
+                </li>
+               </ul>
 
-              </div>
+              {#btn selon connex° rôle #}
+              <ul class="navbar-nav align-items-center d-none d-lg-flex ms-auto">
+                {% if app.user %}
+                    {#connecté#}
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <li class="nav-item">
+                            <a href="{{ path('app_admin_dashboard') }}"
+                               class="btn btn-brun">
+                                Espace Admin
+                            </a>
+                        </li>
+                    {% elseif is_granted('ROLE_EMPLOYE') %}
+                        <li class="nav-item">
+                            <a href="{{ path('app_employe_dashboard') }}"
+                               class="btn btn-brun">
+                                Espace Employé
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a href="{{ path('app_user_dashboard') }}"
+                               class="btn btn-brun">
+                                Mon compte
+                            </a>
+                        </li>
+                    {% endif %}
+                    <li class="nav-item ms-2">
+                        <a href="{{ path('app_logout') }}" class="nav-link">Déconnexion</a>
+                    </li>
+                {% else %}
+                    {#client pas connecté #}
+                    <li class="nav-item">
+                        <a href="{{ path('app_login') }}" class="nav-link">Connexion</a>
+                    </li>
+                    <li class="nav-item ms-2">
+                        <a href="{{ path('app_register') }}" class="btn btn-brun">
+                            S'inscrire
+                        </a>
+                    </li>
+                {% endif %}
+              </ul>
+
+            </div>
 
             {# menu mobile#}
-            <div class+"collapse d-lg-none" id="navmenu">
-                  <ul class="navbar-nav">
-                      <li class="nav-item">
-                           <a href="{{ path('app_home') }}" class="nav-link py-2">Accueil</a>
-                      </li>
-                      <li class="nav-item">
-                          <a href="{{ path('app_menu_index') }}" class="nav-link py-2">Nos menus</a>
-                      </li>
-                      <li class="nav-item">
-                          <a href="{{ path('app_contact') }}" class="nav-link py-2">Contact</a>
-                      </li>
-                      {% if app.user %}
+             <div class="collapse d-lg-none" id="navMenu">
+                 <ul class="navbar-nav py-2">
+                     <li class="nav-item">
+                         <a href="{{ path('app_home') }}" class="nav-link py-2">Accueil</a>
+                     </li>
+                     <li class="nav-item">
+                         <a href="{{ path('app_menu_index') }}" class="nav-link py-2">Nos menus</a>
+                     </li>
+                     <li class="nav-item">
+                         <a href="{{ path('app_avis_liste') }}" class="nav-link py-2">Vos avis</a>
+                     </li>
+                     <li class="nav-item">
+                         <a href="{{ path('app_contact') }}" class="nav-link py-2">Contact</a>
+                     </li>
+                     {% if app.user %}
                          {% if is_granted('ROLE_ADMIN') %}
-                            <li class="nav-item">
-                                <a href="{{ path('app_admin_dashboard') }}" class="nav-link py-2">Admin</a>
-                            </li>
+                              <li class="nav-item">
+                                  <a href="{{ path('app_admin_dashboard') }}" class="nav-link py-2">Espace Admin</a>
+                              </li>
                          {% elseif is_granted('ROLE_EMPLOYE') %}
-                           <li class="nav-item">
-                                <a href="{{ path('app_employe_dashboard') }}" class="nav-link py-2">Employé</a>
-                           </li>
+                             <li class="nav-item">
+                                 <a href="{{ path('app_employe_dashboard') }}" class="nav-link py-2">Espace Employé</a>
+                             </li>
                          {% else %}
-                           <li class="nav-item">
-                                <a href="{{ path('app_user_dashboard') }}" class="nav-link py-2">Mon espace</a>
-                           </li>
+                             <li class="nav-item">
+                                 <a href="{{ path('app_user_dashboard') }}" class="nav-link py-2">Mon compte</a>
+                             </li>
                          {% endif %}
-                           <li class="nav-item">
-                                <a href="{{ path('app_logout') }}" class="nav-link py-2">Déconnexion</a>
-                           </li>
-                         {% else %}
-                           <li class="nav-item">
-                                <a href="{{ path('app_login') }}" class="nav-link py-2">Connexion</a>
-                           </li>
-                           <li class="nav-item">
-                                <a href="{{ path('app_register') }}" class="nav-link py-2">S'inscrire</a>
-                           </li>
+                         <li class="nav-item">
+                             <a href="{{ path('app_logout') }}" class="nav-link py-2">Déconnexion</a>
+                         </li>
+                     {% else %}
+                         <li class="nav-item">
+                             <a href="{{ path('app_login') }}" class="nav-link py-2">Connexion</a>
+                         </li>
+                         <li class="nav-item">
+                             <a href="{{ path('app_register') }}" class="nav-link py-2">S'inscrire</a>
+                         </li>
                      {% endif %}
-                  </ul>
-              </div>
-           </div>
-        </nav>
+                 </ul>
+             </div>
 
-      {#msg flash (ex: identifiants incorrects)#}
+          </div>
+       </nav>
+
+       {#msg flash (ex: identifiants incorrects)#}
         <div class="container-xl px-4 mt-3">
             {% for type, messages in app.flashes %}
                 {% for message in messages %}
@@ -148,10 +172,8 @@
         </div>
 
       {#contenu principal#}                
-        <main class="main-content" id="main">
-            <div class="container-xl px-4">
-               {% block body %}{% endblock %}
-            </div>
+        <main id="main">
+           {% block body %}{% endblock %}
         </main>
       
        {#footer#}
@@ -159,15 +181,15 @@
              <div class="container-xl px-4">
                <div class="row g-4">
 
-                 {#colonne logo+infos #}
+                 {#colonne1#}
                  <div class="col-12 col-md-6 col-lg-3">
-                      <h5>Vite &amp; Gourmand</h5>
-                      <p class="small mt-2 mb-1">Bordeaux depuis 1999</p>
-                      <p class="small">contact@viteetgourmand.fr</p>
+                     <div class="footer-brand">Vite &amp; Gourmand</div>
+                     <p>Bordeaux depuis 1999</p>
+                     <p>contact@viteetgourmand.fr</p>
                  </div>
 
                  {#colonne horaire dynmq BDD #}
-                 <div class="col-12 col-md-6 col-lg-3">
+                 <div class="col-12 col-md-6 col-lg-2">
                      <h5>HORAIRES</h5>
                      {% if horaires is defined and horaires|length > 0 %}
                          {% for horaire in horaires %}
@@ -180,37 +202,34 @@
                                  {% endif %}
                              </p>
                          {% endfor %}
-                     {% endif %}
+                      {% endif %}
                  </div>
 
                  {#colonne à propos #}
-                 <div class="col-12 col-md-6 col-lg-3">
+                 <div class="col-12 col-md-6 col-lg-2">
                      <h5>À PROPOS</h5>
-                     <ul class="list-unstyled mt-2">
-                         <li class="mb-1"><a href="{{ path('app_home') }}">Qui sommes-nous ?</a></li>
-                         <li class="mb-1"><a href="{{ path('app_menu_index') }}">Nos menus</a></li>
-                         <li class="mb-1"><a href="{{ path('app_avis_liste') }}">Les avis</a></li>
-                         <li class="mb-1"><a href="{{ path('app_contact') }}">Nous contacter</a></li>
-                     </ul>
+                     <a href="{{ path('app_home') }}">Qui sommes-nous ?</a>
+                     <a href="{{ path('app_menu_index') }}">Nos menus</a>
+                     <a href="{{ path('app_avis_liste') }}">Les avis</a>
+                     <a href="{{ path('app_contact') }}">Nous contacter</a>
+                     <a href="#">FAQ</a>
                  </div>
 
                  {#colonne infos légales #}
-                 <div class="col-12 col-md-6 col-lg-3">
+                 <div class="col-12 col-md-6 col-lg-2">
                      <h5>INFORMATIONS</h5>
-                     <ul class="list-unstyled mt-2">
-                         <li class="mb-1"><a href="#">Mentions légales</a></li>
-                         <li class="mb-1"><a href="#">CGV</a></li>
-                         <li class="mb-1"><a href="#">CGU</a></li>
-                         <li class="mb-1"><a href="#">Politique de confidentialité</a></li>
-                         <li class="mb-1"><a href="#">Cookies</a></li>
-                     </ul>
+                     <a href="#">Mentions légales</a>
+                     <a href="#">CGV</a>
+                     <a href="#">CGU</a>
+                     <a href="#">Politique de confidentialité</a>
+                     <a href="#">Cookies</a>
                  </div>
 
                </div>
 
                {#cpyright #}
                <hr class="footer-hr mt-4 mb-3">
-               <p class="text-center small mb-0">
+               <p class="footer-copyright">
                  &copy; {{ "now"|date("Y") }} Vite &amp; Gourmand — Tous droits réservés
                </p>
              </div>
