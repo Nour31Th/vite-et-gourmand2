@@ -208,7 +208,7 @@ class UserController extends AbstractController
             $avis->setNote($note);
             $avis->setCommentaire($commentaire);
             $avis->setValide(false); //attente valida°employé
-            $avis->setDateAvis(new \DateTimeImmutable());
+            $avis->setdate_avis(new \DateTimeImmutable());
 
             $em->persist($avis);
             $em->flush();

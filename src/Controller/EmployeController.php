@@ -107,7 +107,7 @@ class EmployeController extends AbstractController
     public function avis(AvisRepository $avisRepo): Response
     {
         //récup que avis pas encore validés
-        $avis = $avisRepo->findBy(['valide' => false], ['dateAvis' => 'DESC']);
+        $avis = $avisRepo->findBy(['valide' => false], ['date_avis' => 'DESC']);
 
         return $this->render('employe/avis.html.twig', [
             'avis' => $avis,

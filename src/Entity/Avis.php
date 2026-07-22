@@ -99,12 +99,12 @@ class Avis
         return $this;
     }
 
-    public function getDateAvis(): ?\DateTimeImmutable
+    public function getdate_avis(): ?\DateTimeImmutable
     {
         return $this->date_avis;
     }
 
-    public function setDateAvis(\DateTimeImmutable $date_avis): static
+    public function setdate_avis(\DateTimeImmutable $date_avis): static
     {
         $this->date_avis = $date_avis;
 

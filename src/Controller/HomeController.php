@@ -18,7 +18,7 @@ class HomeController extends AbstractController
         HoraireRepository $horaireRepo
     ): Response {
         return $this->render('home/index.html.twig', [
-            'avis'          => $avisRepo->findBy(['valide' => true], ['dateAvis' => 'DESC'], 3),  //avis validés
+            'avis'          => $avisRepo->findBy(['valide' => true], ['date_avis' => 'DESC'], 3),  //avis validés
             'horaires'      => $horaireRepo->findAll(),  //horaires pr footer dynmq
         ]);
     }

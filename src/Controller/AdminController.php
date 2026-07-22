@@ -268,20 +268,6 @@ class AdminController extends AbstractController
         return $this->render('admin/horaires.html.twig', ['horaires' => $horaires]);
     }
 
-    //stats données MongoDB via MongoDBService affichées dans graphique Chart.js
-    #[Route('/stats', name: 'app_admin_stats')]
-    public function stats(CommandeRepository $commandeRepo): Response
-    {
-        // (MongoDB sera ajouté sur feature/mongodb)
-        $totalCommandes  = count($commandeRepo->findAll());
-        $commandesParMois = $commandeRepo->findCommandesParMois();
-
-        return $this->render('admin/stats.html.twig', [
-            'total_commandes'   => $totalCommandes,
-            'commandes_par_mois' => $commandesParMois,
-        ]);
-    }
-
     //constructeur
     public function __construct(
         private MongoDBService $mongoDBService

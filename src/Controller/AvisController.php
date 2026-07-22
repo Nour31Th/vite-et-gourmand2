@@ -18,7 +18,7 @@ class AvisController extends AbstractController
         //recup que avis validés par employé/admin
         $avis = $avisRepo->findBy(
             ['valide' => true],        // valide = true signifie que l'avis a été approuvé
-            ['dateAvis' => 'DESC']
+            ['date_avis' => 'DESC']
         );
 
         return $this->render('avis/liste.html.twig', [
