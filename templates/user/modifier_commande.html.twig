@@ -10,126 +10,105 @@
 
 {% block body %}
 
-<div class="hero-bandeau-page">
-    <h1 class="hero-bandeau-titre">Modifier ma commande</h1>
+<div class="hero-bandeau">
+    <h1 class="hero-titre">Modifier ma commande</h1>
 </div>
 
 <section class="section-commande">
-    <div class="container-xl px-4">
+    <div class="container-xl px-4 w-100" style="max-width:660px">
 
+        {#lien retour#}
         <a href="{{ path('app_user_dashboard') }}" class="lien-retour">
             ← Retour à mes commandes
         </a>
 
-        <div class="row justify-content-center mt-3">
-            <div class="col-12 col-md-8">
-                <div class="commande-card">
+        <div class="login-card mt-2">
 
-                    {#rappel menu non modifiable#}
-                    <div class="recap-menu mb-4 p-3 bg-light rounded">
-                        <div class="recap-menu-label">Menu commandé (non modifiable)</div>
-                        <div class="recap-menu-titre">{{ commande.menu.titre }}</div>
-                        <div class="recap-menu-info">
-                            {{ commande.menu.theme }} — {{ commande.menu.regime }}
+            {# Rappel menu non modifiable #}
+            <div class="form-rappel mb-4">
+                <p class="form-rappel-texte">
+                    Menu : <strong>{{ commande.menu.titre }}</strong>
+                </p>
+                <p class="form-hint">Le menu ne peut pas être modifié.</p>
+            </div>
+
+            <form method="post">
+
+                {#csrf#}
+                <input type="hidden" name="_token"
+                       value="{{ csrf_token('modifier_commande') }}">
+
+                <div class="row g-3">
+
+                    {#adresse pré-remplie commande #}
+                    <div class="col-12">
+                        <label class="form-label">Adresse de livraison *</label>
+                        <input type="text"
+                               name="adresse_livraison"
+                               class="form-control"
+                               value="{{ commande.adresseLivraison }}"
+                               required>
+                    </div>
+
+                    {#ville, frais de livraison (recalculés côté serveur) #}
+                    <div class="col-md-6">
+                        <label class="form-label">Ville *</label>
+                        <input type="text"
+                               name="ville_livraison"
+                               class="form-control"
+                               value="{{ commande.villeLivraison }}"
+                               required>
+                        <div class="form-hint">Livraison gratuite à Bordeaux · +5€ ailleurs</div>
+                    </div>
+
+                    {#nb personnes conditionne réduc° 10% #}
+                    <div class="col-md-6">
+                        <label class="form-label">Nombre de personnes *</label>
+                        <input type="number"
+                               name="nb_personnes"
+                               class="form-control"
+                               value="{{ commande.nbPersonnes }}"
+                               min="{{ commande.menu.nbPersonnesMin }}"
+                               required>
+                        <div class="form-hint">
+                            Minimum : {{ commande.menu.nbPersonnesMin }} personnes
                         </div>
                     </div>
 
-                    <form action="{{ path('app_user_modifier_commande', {id: commande.id}) }}"
-                          method="post">
+                    {#date presta°, min = aujourd'hui #}
+                    <div class="col-md-6">
+                        <label class="form-label">Date de prestation *</label>
+                        <input type="date"
+                               name="date_prestation"
+                               class="form-control"
+                               value="{{ commande.datePrestation|date('Y-m-d') }}"
+                               required>
+                    </div>
 
-                        {#token csrf#}
-                        <input type="hidden"
-                               name="_token"
-                               value="{{ csrf_token('modifier_' ~ commande.id) }}">
+                    {#heure livraison #}
+                    <div class="col-md-6">
+                        <label class="form-label">Heure de livraison *</label>
+                        <input type="time"
+                               name="heure_livraison"
+                               class="form-control"
+                               value="{{ commande.heureLivraison|date('H:i') }}"
+                               required>
+                    </div>
 
-                        {#adresse pré-remplie #}
-                        <div class="mb-3">
-                            <label for="adresse_livraison" class="form-label">
-                                Adresse de livraison *
-                            </label>
-                            <input type="text"
-                                   id="adresse_livraison"
-                                   name="adresse_livraison"
-                                   class="form-control"
-                                   value="{{ commande.adresseLivraison }}"
-                                   required>
-                        </div>
-
-                        <div class="row">
-                            {#ville pré-remplie #}
-                            <div class="col-md-6 mb-3">
-                                <label for="ville_livraison" class="form-label">
-                                    Ville *
-                                </label>
-                                <input type="text"
-                                       id="ville_livraison"
-                                       name="ville_livraison"
-                                       class="form-control"
-                                       value="{{ commande.villeLivraison }}"
-                                       required>
-                                <div class="form-text">
-                                    Livraison gratuite à Bordeaux · +5 € ailleurs
-                                </div>
-                            </div>
-
-                            {#nb pers pré-rempli #}
-                            <div class="col-md-6 mb-3">
-                                <label for="nb_personnes" class="form-label">
-                                    Nombre de personnes *
-                                    <span class="form-text">(min. {{ commande.menu.nbPersonnesMin }})</span>
-                                </label>
-                                <input type="number"
-                                       id="nb_personnes"
-                                       name="nb_personnes"
-                                       class="form-control"
-                                       min="{{ commande.menu.nbPersonnesMin }}"
-                                       value="{{ commande.nbPersonnes }}"
-                                       required>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            {#date presta° pré-remplie #}
-                            <div class="col-md-6 mb-3">
-                                <label for="date_prestation" class="form-label">
-                                    Date de prestation *
-                                </label>
-                                <input type="date"
-                                       id="date_prestation"
-                                       name="date_prestation"
-                                       class="form-control"
-                                       value="{{ commande.datePrestation|date('Y-m-d') }}"
-                                       min="{{ "now"|date("Y-m-d") }}"
-                                       required>
-                            </div>
-
-                            {#heure livraison pré-remplie #}
-                            <div class="col-md-6 mb-3">
-                                <label for="heure_livraison" class="form-label">
-                                    Heure de livraison *
-                                </label>
-                                <input type="time"
-                                       id="heure_livraison"
-                                       name="heure_livraison"
-                                       class="form-control"
-                                       value="{{ commande.heureLivraison|date('H:i') }}"
-                                       required>
-                            </div>
-                        </div>
-
-                        <div class="d-flex gap-2 mt-2">
-                            <button type="submit" class="btn btn-vert">
-                                Enregistrer les modifications
-                            </button>
-                            <a href="{{ path('app_user_dashboard') }}"
-                               class="btn btn-outline-secondary">
-                                Annuler
-                            </a>
-                        </div>
-
-                    </form>
                 </div>
-            </div>
+
+                {#btn #}
+                <div class="d-flex gap-2 mt-4">
+                    <button type="submit" class="btn btn-vert">
+                        Enregistrer les modifications
+                    </button>
+                    <a href="{{ path('app_user_dashboard') }}"
+                       class="btn btn-outline-secondary">
+                        Annuler
+                    </a>
+                </div>
+
+            </form>
         </div>
     </div>
 </section>

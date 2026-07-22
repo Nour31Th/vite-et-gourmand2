@@ -10,33 +10,29 @@
 
 {% block body %}
 
-{#titre#}
 <div class="hero-bandeau">
     <h1 class="hero-titre">Contact</h1>
 </div>
 
 <section class="section-contact">
-    <div class="container-xl px-4">
+    <div class="container-xl px-4 w-100">
         <div class="row g-5">
 
-            {#formulaire#}
+            {#formulaire contact #}
             <div class="col-12 col-lg-7">
-                <div class="commande-card">
+                <div class="login-card">
                     <h2 class="commande-section-titre">Envoyez-nous un message</h2>
 
                     <form action="{{ path('app_contact') }}" method="post">
 
-                        {#token csrf#}
-                        <input type="hidden"
-                               name="_token"
+                        {#token csrf obligatoire même pr page public#}
+                        <input type="hidden" name="_token"
                                value="{{ csrf_token('contact') }}">
 
                         {#obj msg#}
                         <div class="mb-3">
                             <label for="titre" class="form-label">Sujet *</label>
-                            <input type="text"
-                                   id="titre"
-                                   name="titre"
+                            <input type="text" id="titre" name="titre"
                                    class="form-control"
                                    placeholder="Objet de votre message"
                                    required>
@@ -45,37 +41,30 @@
                         {#mail expedteur#}
                         <div class="mb-3">
                             <label for="email" class="form-label">Votre email *</label>
-                            <input type="email"
-                                   id="email"
-                                   name="email"
+                            <input type="email" id="email" name="email"
                                    class="form-control"
                                    placeholder="votre@email.fr"
-                                   autocomplete="email"
-                                   required>
+                                   autocomplete="email" required>
                         </div>
 
                         {#msg#}
                         <div class="mb-4">
                             <label for="description" class="form-label">Message *</label>
-                            <textarea id="description"
-                                      name="description"
-                                      class="form-control"
-                                      rows="6"
+                            <textarea id="description" name="description"
+                                      class="form-control" rows="6"
                                       placeholder="Votre message..."
                                       required></textarea>
                         </div>
 
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-vert">
-                                Envoyer le message
-                            </button>
-                        </div>
+                        <button type="submit" class="btn btn-vert w-100">
+                            Envoyer le message
+                        </button>
 
                     </form>
                 </div>
             </div>
 
-            {#info contact#}
+            {#coordonnées #}
             <div class="col-12 col-lg-5">
                 <div class="contact-infos">
                     <h2 class="commande-section-titre">Nos coordonnées</h2>
@@ -93,10 +82,11 @@
                         </div>
                     </div>
 
+                    {#horaires dynamiques depuis AppExtension (Twig global) #}
                     <div class="contact-info-item">
                         <div class="contact-info-label">Horaires</div>
                         <div class="contact-info-value">
-                            {% if horaires is defined and horaires|length > 0 %}
+                            {% if horaires is defined %}
                                 {% for horaire in horaires %}
                                     <div>
                                         <strong>{{ horaire.jour }}</strong> :
@@ -119,6 +109,7 @@
                             +5 € dans les autres communes de la métropole
                         </div>
                     </div>
+
                 </div>
             </div>
 

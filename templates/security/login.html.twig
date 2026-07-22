@@ -1,0 +1,106 @@
+{#page connexion, variables : last_username->dernier email saisi (pré-remplit le champ), error->erreur d'authentification éventuelle#}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion — Vite & Gourmand{% endblock %}
+
+{% block page_css %}
+    {#css des formulaires #}
+    <link rel="stylesheet" href="{{ asset('css/forms.css') }}">
+{% endblock %}
+
+{% block body %}
+
+{#titre#}
+<div class="hero-bandeau">
+    <h1 class="hero-titre">Connexion</h1>
+</div>
+
+{#section #}
+<section class="login-container">
+    <div style="width:100%;max-width:480px">
+        <div class="login-card">
+
+            {#en-tête#}
+            <div class="login-header">
+                <h2 class="login-titre">Se connecter</h2>
+                <p class="login-sous-titre">Bienvenue chez Vite & Gourmand</p>
+            </div>
+
+            {#msg erreur si id faux, error.messageKey traduit via domaine 'security' de Symfony #}
+            {% if error %}
+                <div class="alert alert-danger">
+                    {{ error.messageKey|trans(error.messageData, 'security') }}
+                </div>
+            {% endif %}
+
+            {#formulaire, POST /login intercepté automatiqmnt par Symfony Security, symfony vérif mail + mdp sans code PHP supplémentaire #}
+            <form action="{{ path('app_login') }}" method="post">
+
+                {#token csrf'authenticate' imposé par symfony security #}
+                <input type="hidden" name="_csrf_token"
+                       value="{{ csrf_token('authenticate') }}">
+
+                {#champ email->"_username" imposé par symfony security, value="{{ last_username }}" pré-remplit si erreur #}
+                <div class="mb-3">
+                    <label for="inputEmail" class="form-label">Adresse email</label>
+                    <input type="email"
+                           id="inputEmail"
+                           name="_username"
+                           value="{{ last_username }}"
+                           class="form-control"
+                           placeholder="votre@email.fr"
+                           autocomplete="email"
+                           required>
+                </div>
+
+                {#champ mdp->name="_password" imposé par symfony security #}
+                <div class="mb-3">
+                    <label for="inputPassword" class="form-label">Mot de passe</label>
+                    <input type="password"
+                           id="inputPassword"
+                           name="_password"
+                           class="form-control"
+                           placeholder="Votre mot de passe"
+                           autocomplete="current-password"
+                           required>
+                </div>
+
+                {#case "Se souvenir de moi"->name="_remember_me" imposé par symfony #}
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox"
+                           id="remember_me" name="_remember_me">
+                    <label class="form-check-label" for="remember_me">
+                        Se souvenir de moi
+                    </label>
+                </div>
+
+                {#btn connex°#}
+                <button type="submit" class="btn btn-vert w-100 mb-3">
+                    Se connecter
+                </button>
+
+            </form>
+
+            {#mdp oublié #}
+            <div class="text-center">
+                <a href="{{ path('app_reset_password') }}" class="form-lien-oubli">
+                    Mot de passe oublié ?
+                </a>
+            </div>
+
+            <hr class="form-hr">
+
+            {#lien inscript°#}
+            <div class="login-footer">
+                Pas encore de compte ?
+                <a href="{{ path('app_register') }}" class="form-lien-inscription">
+                    S'inscrire
+                </a>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+{% endblock %}
