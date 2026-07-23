@@ -21,7 +21,7 @@ ENV APP_DEBUG=0
 WORKDIR /app
 COPY . .
 
-RUN composer install --no-dev --optimize-autoloader --no-scripts
+RUN composer install --no-dev --optimize-autoloader --no-scripts --ignore-platform-reqs
 
 EXPOSE 8000
 
