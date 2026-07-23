@@ -25,23 +25,8 @@ class MenuController extends AbstractController
         ]);
     }
 
-    /**
-     * Détail menu = all informations du menu (photos, descript° et condit°, plats + allergènes) +prix calculé (commande.js)
-     * #[MapEntity] récupère automtqmnt menu par id et renvoie error 404 si menu existe pas.
-     */
-    #[Route('/menu/{id}', name: 'app_menu_show', requirements: ['id' => '\d+'])]
-    public function show(int $id, MenuRepository $menuRepo): Response
-    {
-        $menu = $menuRepo->find($id);                                   // Recherche du menu par son id
-        if (!$menu || !$menu->isActif()) {                             // Si menu existe pas ou pas actif → error 404
-            throw $this->createNotFoundException('Menu introuvable.');
-        }
-        return $this->render('menu/show.html.twig', [
-            'menu' => $menu,
-        ]);
-    }
 
-     /**filtre AJAX menus, route appelée par menu-filter.js via Fetch API.
+    /**filtre AJAX menus, route appelée par menu-filter.js via Fetch API.
      * retourne JSON w/ menus filtrés.
      * paramètres GET -> thème, régime, prix max, nb personnes */
     #[Route('/menu/filter', name: 'app_menu_filter', methods: ['GET'])]
@@ -69,4 +54,21 @@ class MenuController extends AbstractController
 
         return new JsonResponse(['menus' => $data]); // JsonResponse encode automatiquement le tableau en JSON + add header Content-Type: application/json
     }
+
+    /**
+     * Détail menu = all informations du menu (photos, descript° et condit°, plats + allergènes) +prix calculé (commande.js)
+     * #[MapEntity] récupère automtqmnt menu par id et renvoie error 404 si menu existe pas.
+     */
+    #[Route('/menu/{id}', name: 'app_menu_show', requirements: ['id' => '\d+'])]
+    public function show(int $id, MenuRepository $menuRepo): Response
+    {
+        $menu = $menuRepo->find($id);                                   // Recherche du menu par son id
+        if (!$menu || !$menu->isActif()) {                             // Si menu existe pas ou pas actif → error 404
+            throw $this->createNotFoundException('Menu introuvable.');
+        }
+        return $this->render('menu/show.html.twig', [
+            'menu' => $menu,
+        ]);
+    }
+   
 }
