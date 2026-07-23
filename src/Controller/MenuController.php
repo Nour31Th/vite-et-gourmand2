@@ -44,8 +44,8 @@ class MenuController extends AbstractController
                 'titre'           => $menu->getTitre(),
                 'theme'           => $menu->getTheme(),
                 'regime'          => $menu->getRegime(),
-                'prix'            => $menu->getPrix(),
-                'nb_personnes_min'=> $menu->getNbPersonnesMin(),
+                'prix'            => (float) $menu->getPrix(),
+                'nb_personnes_min' => (int) $menu->getNbPersonnesMin(),
                 'image_url'       => $menu->getImages()->first()                                   // 1ère image menu pr card
                                      ? '/images/menus/' . $menu->getImages()->first()->getUrl()    // ?-> opérateur nullsafe pr éviter erreur si 0 image
                                      : '/images/default-menu.jpg',
