@@ -1,5 +1,7 @@
 FROM php:8.4-cli
 
+ENV PHP_VERSION=8.4.0
+
 RUN apt-get update && apt-get install -y \
     git curl libpq-dev libicu-dev libxml2-dev \
     libonig-dev libssl-dev pkg-config unzip libzstd-dev \
