@@ -20,7 +20,7 @@
         
         {# css bootstrap5 w/ cdn #} 
         <link href ="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"> 
-        
+    
         {#fichier css de tte l'appli#}
         <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 
@@ -36,25 +36,16 @@
         <nav class="navbar navbar-expand-lg bg-white border-bottom" aria-label="Navigation principale">
            <div class="container-x1 px-4">
              <div class="navbar-inner">
-                 
-               {# btn menu hamburger mobile#}
-               <button class="navbar-toggler d-lg-none border-0 ms-auto"
-                       type="button"
-                       data-bs-toggle="collapse
-                       data-bs-target="#navMenu"
-                       aria-label="Ouvrir le menu">
-                 <span class="navbar-toggler-icon"></span>
-               </button>
 
                {# logo#}
-                <a href="{{ path ('app_home') }}" class="navbar-logo">
+                <a href="{{ path ('app_home') }}" class="navbar-logo me-3">
                      <img src="{{ asset ('images/logo.svg') }}"
                          alt="Logo vite et Gourmand"
                          class="navbar-logo-img">
                 </a>
                
                {#menu desktop#}
-               <ul class="navbar-nav gap-2 align-items-center d-none d-lg-flex">
+               <ul class="navbar-nav mx-auto gap-1 align-items-center d-none d-lg-flex">
                 <li class="nav-item">
                     <a href="{{ path('app_home') }}" class="nav-link">Accueil</a>
                 </li>
@@ -70,14 +61,14 @@
                </ul>
 
               {#btn selon connex° rôle et barre recherche #}
-              <div class="d-none d-lg-flex align-items-center gap-3">
+              <div class="d-none d-lg-flex align-items-center gap-3 ms-3">
                 
                 {#barre recherche#}
                 <div class="navbar-search">
                    <input type="text"
                           placeholder=="Recherche"
                           class="navbar-search-input">
-                   <span class="navbar-search-icon"></span>
+                   <i class="bi bi-search navbar-search-icon"></i>
                 </div>
 
                 {% if app.user %}
@@ -121,6 +112,15 @@
               </ul>
 
             </div>
+            
+            {# btn menu hamburger mobile#}
+               <button class="navbar-toggler d-lg-none border-0 ms-auto"
+                       type="button"
+                       data-bs-toggle="collapse
+                       data-bs-target="#navMenu"
+                       aria-label="Ouvrir le menu">
+                 <span class="navbar-toggler-icon"></span>
+               </button>
 
             {# menu mobile#}
              <div class="collapse d-lg-none" id="navMenu">
