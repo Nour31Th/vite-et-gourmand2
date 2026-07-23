@@ -32,33 +32,36 @@ class MenuController extends AbstractController
     #[Route('/menu/filter', name: 'app_menu_filter', methods: ['GET'])]
     public function filter(Request $request, MenuRepository $menuRepo): JsonResponse
     {
-        $theme       = $request->query->get('theme');                                                             // Récupéra° paramètres filtre depuis URL
-        $regime      = $request->query->get('regime');
-        $prixMax     = $request->query->get('prix_max') ? (float) $request->query->get('prix_max') : null;
-        $nbPersonnes = $request->query->get('nb_personnes') ? (int) $request->query->get('nb_personnes') : null;
-        $menus = $menuRepo->findWithFilters($theme, $regime, $prixMax, $nbPersonnes); // Récup° menus filtrés via Repository
+        try {
+             $theme       = $request->query->get('theme');                                                             // Récupéra° paramètres filtre depuis URL
+             $regime      = $request->query->get('regime');
+             $prixMax     = $request->query->get('prix_max') ? (float) $request->query->get('prix_max') : null;
+             $nbPersonnes = $request->query->get('nb_personnes') ? (int) $request->query->get('nb_personnes') : null;
+             $menus = $menuRepo->findWithFilters($theme, $regime, $prixMax, $nbPersonnes); // Récup° menus filtrés via Repository
 
-        $data = array_map(function ($menu) {                  // Transfrma° objets Menu-> tableaux associatifs car JsonResponse peut pas direc sérialiser objets Doctrine
-            return [
-                'id'              => $menu->getId(),
-                'titre'           => $menu->getTitre(),
-                'theme'           => $menu->getTheme(),
-                'regime'          => $menu->getRegime(),
-                'prix'            => (float) $menu->getPrix(),
-                'nb_personnes_min' => (int) $menu->getNbPersonnesMin(),
-                'image_url'       => $menu->getImages()->first()                                   // 1ère image menu pr card
+             $data = array_map(function ($menu) {                  // Transfrma° objets Menu-> tableaux associatifs car JsonResponse peut pas direc sérialiser objets Doctrine
+                 return [
+                   'id'              => $menu->getId(),
+                   'titre'           => $menu->getTitre(),
+                   'theme'           => $menu->getTheme(),
+                   'regime'          => $menu->getRegime(),
+                   'prix'            => (float) $menu->getPrix(),
+                   'nb_personnes_min' => (int) $menu->getNbPersonnesMin(),
+                   'image_url'       => $menu->getImages()->first()                                   // 1ère image menu pr card
                                      ? '/images/menus/' . $menu->getImages()->first()->getUrl()    // ?-> opérateur nullsafe pr éviter erreur si 0 image
-                                     : '/images/default-menu.jpg',
-            ];
-        }, $menus);
+                                     : '/images/default-menu.png',
+                 ];
+             }, $menus);
 
-        return new JsonResponse(['menus' => $data]); // JsonResponse encode automatiquement le tableau en JSON + add header Content-Type: application/json
+             return new JsonResponse(['menus' => $data]); // JsonResponse encode automatiquement le tableau en JSON + add header Content-Type: application/json
+        } catch (\Exception $e) {
+             return new JsonResponse(['error' => $e->getMessage()], 500);
+        }
     }
 
     /**
      * Détail menu = all informations du menu (photos, descript° et condit°, plats + allergènes) +prix calculé (commande.js)
-     * #[MapEntity] récupère automtqmnt menu par id et renvoie error 404 si menu existe pas.
-     */
+     * #[MapEntity] récupère automtqmnt menu par id et renvoie error 404 si menu existe pas*/
     #[Route('/menu/{id}', name: 'app_menu_show', requirements: ['id' => '\d+'])]
     public function show(int $id, MenuRepository $menuRepo): Response
     {
