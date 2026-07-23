@@ -6,9 +6,12 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install pdo pdo_pgsql intl mbstring xml \
     && pecl install mongodb \
     && docker-php-ext-enable mongodb \
+    && echo "extension=mongodb.so" >> /usr/local/etc/php/php.ini \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+ENV COMPOSER_ALLOW_SUPERUSER=1
 
 WORKDIR /app
 COPY . .
