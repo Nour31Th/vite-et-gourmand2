@@ -42,7 +42,8 @@
         "symfony/web-link": "8.1.*",
         "symfony/yaml": "8.1.*",
         "twig/extra-bundle": "^2.12|^3.0",
-        "twig/twig": "^2.12|^3.0"
+        "twig/twig": "^2.12|^3.0",
+        "mongodb/mongodb": "^1.20"
     },
     "config": {
         "allow-plugins": {
@@ -51,10 +52,7 @@
             "symfony/runtime": true
         },
         "bump-after-update": true,
-        "sort-packages": true,
-        "platform": {
-            "php": "8.4.0"
-        }
+        "sort-packages": true
     },
     "autoload": {
         "psr-4": {
