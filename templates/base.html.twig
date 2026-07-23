@@ -13,7 +13,7 @@
         <title>{% block title %}Vite et Gourmand{% endblock %}</title>
         
         {# logo onglet navigateur #} 
-        <link rel"icon" href="{{ asset('images/logo.svg') }}">
+        <link rel="icon" href="{{ asset('images/logo.svg') }}">
 
         {# police google fonts #} 
         <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Poppins:wght@400;600&family=Open+Sans:wght@600&family=Lato:wght@400;700&family=Roboto:wght@700&family=Lexend:wght@400;500&display=swap" rel="stylesheet">
@@ -30,91 +30,15 @@
     <body>
 
       {#lien evitement accessblité pr améliorer experience utilisateur #} 
-      <a href=href="#main" class="visually-hidden-focusable">Aller au contenu principal</a>
+      <a href="#main" class="visually-hidden-focusable">Aller au contenu principal</a>
 
       {# ici la navbar #}
         <nav class="navbar navbar-expand-lg bg-white border-bottom" aria-label="Navigation principale">
-           <div class="container-x1 px-4">
+           <div class="container-xl px-4">
              <div class="navbar-inner">
-
-               {# logo#}
-                <a href="{{ path ('app_home') }}" class="navbar-logo me-3">
-                     <img src="{{ asset ('images/logo.svg') }}"
-                         alt="Logo vite et Gourmand"
-                         class="navbar-logo-img">
-                </a>
-               
-               {#menu desktop#}
-               <ul class="navbar-nav mx-auto gap-1 align-items-center d-none d-lg-flex">
-                <li class="nav-item">
-                    <a href="{{ path('app_home') }}" class="nav-link">Accueil</a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ path('app_menu_index') }}" class="nav-link">Nos menus</a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ path('app_avis_liste') }}" class="nav-link">Vos avis</a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ path('app_contact') }}" class="nav-link">Contact</a>
-                </li>
-               </ul>
-
-              {#btn selon connex° rôle et barre recherche #}
-              <div class="d-none d-lg-flex align-items-center gap-3 ms-3">
                 
-                {#barre recherche#}
-                <div class="navbar-search">
-                   <input type="text"
-                          placeholder=="Recherche"
-                          class="navbar-search-input">
-                   <i class="bi bi-search navbar-search-icon"></i>
-                </div>
-
-                {% if app.user %}
-                    {#connecté#}
-                    {% if is_granted('ROLE_ADMIN') %}
-                        <li class="nav-item">
-                            <a href="{{ path('app_admin_dashboard') }}"
-                               class="btn btn-brun">
-                                Espace Admin
-                            </a>
-                        </li>
-                    {% elseif is_granted('ROLE_EMPLOYE') %}
-                        <li class="nav-item">
-                            <a href="{{ path('app_employe_dashboard') }}"
-                               class="btn btn-brun">
-                                Espace Employé
-                            </a>
-                        </li>
-                    {% else %}
-                        <li class="nav-item">
-                            <a href="{{ path('app_user_dashboard') }}"
-                               class="btn btn-brun">
-                                Mon compte
-                            </a>
-                        </li>
-                    {% endif %}
-                    <li class="nav-item ms-2">
-                        <a href="{{ path('app_logout') }}" class="nav-link">Déconnexion</a>
-                    </li>
-                {% else %}
-                    {#client pas connecté #}
-                    <li class="nav-item">
-                        <a href="{{ path('app_login') }}" class="nav-link">Connexion</a>
-                    </li>
-                    <li class="nav-item ms-2">
-                        <a href="{{ path('app_register') }}" class="btn btn-brun">
-                            S'inscrire
-                        </a>
-                    </li>
-                {% endif %}
-              </ul>
-
-            </div>
-            
-            {# btn menu hamburger mobile#}
-               <button class="navbar-toggler d-lg-none border-0 p-0 ms-auto"
+               {# btn menu hamburger mobile#}
+               <button class="navbar-toggler d-lg-none border-0 p-0"
                        type="button"
                        data-bs-toggle="collapse"
                        data-bs-target="#navMenu"
@@ -124,47 +48,89 @@
                  <span class="navbar-toggler-icon"></span>
                </button>
 
+               {# logo#}
+                <a href="{{ path ('app_home') }}" class="navbar-logo">
+                     <img src="{{ asset ('images/logo.svg') }}"
+                         alt="Logo vite et Gourmand"
+                         class="navbar-logo-img">
+                </a>
+               
+               {#menu desktop#}
+               <div class="navbar-liens d-none d-lg-flex align-items-center gap-2">
+                  <a href="{{ path('app_home') }}" class="nav-link">Accueil</a>
+                  <a href="{{ path('app_menu_index') }}" class="nav-link">Nos menus</a>
+                  <a href="{{ path('app_avis_liste') }}" class="nav-link">Vos avis</a>
+                  <a href="#" class="nav-link">Aide</a>
+                  <a href="{{ path('app_contact') }}" class="nav-link">Contact</a>
+               </div>
+
+              {#btn selon connex° rôle et barre recherche #}
+              <div class="navbar-droite d-none d-lg-flex align-items-center gap-3">
+                
+                {#barre recherche#}
+                <div class="navbar-search">
+                   <input type="search"
+                          placeholder="Recherche"
+                          class="navbar-search-input">
+                </div>
+
+                {% if app.user %}
+                    {#connecté#}
+                    {% if is_granted('ROLE_ADMIN') %}
+                            <a href="{{ path('app_admin_dashboard') }}" class="navbar-icon" title="Admin">
+                               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            </a>
+                    {% elseif is_granted('ROLE_EMPLOYE') %}
+                            <a href="{{ path('app_employe_dashboard') }}" class="navbar-icon" title="Employé">
+                               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            </a>
+                    {% else %}
+                            <a href="{{ path('app_user_dashboard') }}" class="navbar-icon" title="Mon compte">
+                               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            </a>
+                    {% endif %}
+                        <a href="{{ path('app_logout') }}" class="nav-link">Déconnexion</a>
+                {% else %}
+                    {#client pas connecté #}
+                        <a href="{{ path('app_login') }}" class="navbar-icon" title="Connexion">
+                           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        </a>
+                {% endif %}
+             
+                {#icône panier #}
+                <a href="{{ path('app_menu_index') }}" class="navbar-icon" title="Commander">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                       <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                       <line x1="3" y1="6" x2="21" y2="6"/>
+                       <path d="M16 10a4 4 0 0 1-8 0"/>
+                       </svg>
+                </a>
+
+              </div>
+          </div>
+            
+            
             {# menu mobile#}
-             <div class="collapse d-lg-none" id="navMenu">
-                 <ul class="navbar-nav py-2">
-                     <li class="nav-item">
+             <div class="collapse navbar-collapse" id="navMenu">
+                 <div class="navbar-nav-mobile py-2">
                          <a href="{{ path('app_home') }}" class="nav-link py-2">Accueil</a>
-                     </li>
-                     <li class="nav-item">
                          <a href="{{ path('app_menu_index') }}" class="nav-link py-2">Nos menus</a>
-                     </li>
-                     <li class="nav-item">
                          <a href="{{ path('app_avis_liste') }}" class="nav-link py-2">Vos avis</a>
-                     </li>
-                     <li class="nav-item">
                          <a href="{{ path('app_contact') }}" class="nav-link py-2">Contact</a>
-                     </li>
                      {% if app.user %}
                          {% if is_granted('ROLE_ADMIN') %}
-                              <li class="nav-item">
                                   <a href="{{ path('app_admin_dashboard') }}" class="nav-link py-2">Espace Admin</a>
-                              </li>
                          {% elseif is_granted('ROLE_EMPLOYE') %}
-                             <li class="nav-item">
                                  <a href="{{ path('app_employe_dashboard') }}" class="nav-link py-2">Espace Employé</a>
-                             </li>
                          {% else %}
-                             <li class="nav-item">
                                  <a href="{{ path('app_user_dashboard') }}" class="nav-link py-2">Mon compte</a>
-                             </li>
                          {% endif %}
-                         <li class="nav-item">
                              <a href="{{ path('app_logout') }}" class="nav-link py-2">Déconnexion</a>
-                         </li>
                      {% else %}
-                         <li class="nav-item">
                              <a href="{{ path('app_login') }}" class="nav-link py-2">Connexion</a>
-                         </li>
-                         <li class="nav-item">
                              <a href="{{ path('app_register') }}" class="nav-link py-2">S'inscrire</a>
-                         </li>
                      {% endif %}
-                 </ul>
+                 </div>
              </div>
 
           </div>
