@@ -11,13 +11,17 @@ RUN apt-get update && apt-get install -y \
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 ENV COMPOSER_ALLOW_SUPERUSER=1
+ENV APP_ENV=prod
+ENV APP_DEBUG=0
+
 
 WORKDIR /app
 COPY . .
 
-RUN composer install --no-dev --optimize-autoloader
+RUN composer install --no-dev --optimize-autoloader --no-scripts
 
 EXPOSE 8000
 
-CMD php bin/console doctrine:migrations:migrate --no-interaction \
+CMD php bin/console cache:clear \
+    && php bin/console doctrine:migrations:migrate --no-interaction \
     && php -S 0.0.0.0:8000 -t public
