@@ -36,23 +36,23 @@
         <nav class="navbar navbar-expand-lg bg-white border-bottom" aria-label="Navigation principale">
            <div class="container-x1 px-4">
              <div class="navbar-inner">
-
+                 
                {# btn menu hamburger mobile#}
-               <button class="navbar-toggler d-lg-none border-0 p-0 me-auto"
+               <button class="navbar-toggler d-lg-none border-0 ms-auto"
                        type="button"
                        data-bs-toggle="collapse
                        data-bs-target="#navMenu"
                        aria-label="Ouvrir le menu">
                  <span class="navbar-toggler-icon"></span>
                </button>
-               
-               {# logo#}
-               <a href="{{ path ('app_home') }}" class="navbar-logo">
-                 <img src="{{ asset ('images/logo.svg') }}"
-                    alt=LOGO vite et Gourmand
-                    class="navbar-logo-img">
-               </a>
 
+               {# logo#}
+                <a href="{{ path ('app_home') }}" class="navbar-logo">
+                     <img src="{{ asset ('images/logo.svg') }}"
+                         alt="Logo vite et Gourmand"
+                         class="navbar-logo-img">
+                </a>
+               
                {#menu desktop#}
                <ul class="navbar-nav gap-2 align-items-center d-none d-lg-flex">
                 <li class="nav-item">
@@ -69,8 +69,17 @@
                 </li>
                </ul>
 
-              {#btn selon connex° rôle #}
-              <ul class="navbar-nav align-items-center d-none d-lg-flex ms-auto">
+              {#btn selon connex° rôle et barre recherche #}
+              <div class="d-none d-lg-flex align-items-center gap-3">
+                
+                {#barre recherche#}
+                <div class="navbar-search">
+                   <input type="text"
+                          placeholder=="Recherche"
+                          class="navbar-search-input">
+                   <span class="navbar-search-icon"></span>
+                </div>
+
                 {% if app.user %}
                     {#connecté#}
                     {% if is_granted('ROLE_ADMIN') %}
