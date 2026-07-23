@@ -24,6 +24,5 @@ RUN composer install --no-dev --optimize-autoloader --no-scripts
 
 EXPOSE 8000
 
-CMD php bin/console cache:clear \
-    && php bin/console doctrine:migrations:migrate --no-interaction \
+CMD php bin/console doctrine:migrations:migrate --no-interaction \
     && php -S 0.0.0.0:8000 -t public
