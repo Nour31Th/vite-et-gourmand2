@@ -27,6 +27,9 @@ class MenuRepository extends ServiceEntityRepository
             ->where('m.actif = :actif')        // -->uniquement menus actifs
             ->orderBy('m.titre', 'ASC')    //-->tri alphabétique
             ->setParameter('actif', true)
+            ->where('m.actif = :actif') // -->uniquement menus actifs
+            ->setParameter('actif', true)        
+            ->orderBy('m.titre', 'ASC');    //-->tri alphabétique
 
         // conditions filtres
         // ajout filtre que si valeur non nulle et non vide
@@ -60,6 +63,7 @@ class MenuRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('m')
             ->select('DISTINCT m.theme') // DISTINCT évite les doublons
             ->where('m.actif = :actif')
+            ->setParameter('actif', true)
             ->orderBy('m.theme', 'ASC')
             ->setParameter('actif', true)
             ->getQuery()
@@ -72,6 +76,7 @@ class MenuRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('m')
             ->select('DISTINCT m.regime')
             ->where('m.actif = :actif')
+            ->setParameter('actif', true)
             ->orderBy('m.regime', 'ASC')
             ->setParameter('actif', true)
             ->getQuery()
