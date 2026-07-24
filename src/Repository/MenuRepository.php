@@ -28,7 +28,7 @@ class MenuRepository extends ServiceEntityRepository
             ->orderBy('m.titre', 'ASC')    //-->tri alphabétique
             ->setParameter('actif', true)
             ->where('m.actif = :actif') // -->uniquement menus actifs
-            ->setParameter('actif', true)        
+            ->setParameter('actif', 1)        
             ->orderBy('m.titre', 'ASC');    //-->tri alphabétique
 
         // conditions filtres
