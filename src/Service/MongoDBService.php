@@ -3,7 +3,6 @@
 
 namespace App\Service;
 
-use MongoDB\Client;
 use MongoDB\Collection;
 
 //rôle :enregistrer stats commandes passée, récup stats pour dashboard admin
@@ -19,7 +18,7 @@ use MongoDB\Collection;
 class MongoDBService
 {
     //collec° MongoDB 'commandes_stats', dtockée en propriété pr éviter de recréer connex° à chaque appel
-    private Collection $collection;
+    private ?Collection $collection = null;
 
     /**
      *constructeur initialise connexion MongoDB
@@ -29,8 +28,11 @@ class MongoDBService
     public function __construct()
     {
         try {
+            if (empty($_ENV['MONGODB_URI']) || empty($_ENV['MONGODB_DB'])) {
+                return;
+            }
             //connex° cluster MongoDB Atlas
-            $client = new Client($_ENV['MONGODB_URI']);
+            $client = new \MongoDB\Client($_ENV['MONGODB_URI']);
 
             //select° bdd & collection
             $this->collection = $client->selectCollection(
@@ -64,6 +66,7 @@ class MongoDBService
      */
     public function saveCommandeStat(array $data): void
     {
+        if ($this->collection) return;
         try {
             $this->collection->insertOne([
                 'commande_id'     => $data['id'],
@@ -96,6 +99,7 @@ class MongoDBService
      */
     public function getStatsByMenu(): array
     {
+        if ($this->collection) return [];
         try {
             return $this->collection->aggregate([
                 //1ère étape grouper/menu_id
@@ -127,6 +131,7 @@ class MongoDBService
      */
     public function getStatsByMois(): array
     {
+        if (!$this->collection) return [];
         try {
             return $this->collection->aggregate([
                 //1ère étape extraire année et mois de la date
@@ -154,6 +159,7 @@ class MongoDBService
      */
     public function getCaTotal(): float
     {
+        if (!$this->collection) return 0.0;
         try {
             $result = $this->collection->aggregate([
                 ['$group' => [
