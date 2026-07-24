@@ -25,7 +25,7 @@ class MenuRepository extends ServiceEntityRepository
     ): array {
         $qb = $this->createQueryBuilder('m')               /*QueryBuilder --> construit requête SQL orientée objet et 'm' --> alias entité Menu */
             ->where('m.actif = :actif') // -->uniquement menus actifs
-            ->setParameter('actif', true)        
+            ->setParameter('actif', 1)        
             ->orderBy('m.titre', 'ASC');    //-->tri alphabétique
 
         // conditions filtres
