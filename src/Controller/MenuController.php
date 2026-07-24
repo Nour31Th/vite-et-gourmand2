@@ -33,14 +33,16 @@ class MenuController extends AbstractController
     public function filter(Request $request, MenuRepository $menuRepo): JsonResponse
     {
         try {
-             $theme       = $request->query->get('theme');                                                             // Récupéra° paramètres filtre depuis URL
-             $regime      = $request->query->get('regime');
-             $prixMax     = $request->query->get('prix_max') ? (float) $request->query->get('prix_max') : null;
-             $nbPersonnes = $request->query->get('nb_personnes') ? (int) $request->query->get('nb_personnes') : null;
-             $menus = $menuRepo->findWithFilters($theme, $regime, $prixMax, $nbPersonnes); // Récup° menus filtrés via Repository
-
-             $data = array_map(function ($menu) {                  // Transfrma° objets Menu-> tableaux associatifs car JsonResponse peut pas direc sérialiser objets Doctrine
-                 return [
+            $menus = $menuRepo->findWithFilters(
+                $request->query->get('theme'),                                                             // Récupéra° paramètres filtre depuis URL
+                $request->query->get('regime'),
+                $request->query->get('prix_max') ? (float) $request->query->get('prix_max') : null,
+                $request->query->get('nb_personnes') ? (int) $request->query->get('nb_personnes') : null
+            );
+             
+            $data = []; 
+            foreach ($menu as $menu) {
+                $data[] =[
                    'id'              => $menu->getId(),
                    'titre'           => $menu->getTitre(),
                    'theme'           => $menu->getTheme(),
@@ -51,11 +53,15 @@ class MenuController extends AbstractController
                                      ? '/images/menus/' . $menu->getImages()->first()->getUrl()    // ?-> opérateur nullsafe pr éviter erreur si 0 image
                                      : '/images/default-menu.png',
                  ];
-             }, $menus);
+             }
 
              return new JsonResponse(['menus' => $data]); // JsonResponse encode automatiquement le tableau en JSON + add header Content-Type: application/json
-        } catch (\Exception $e) {
-             return new JsonResponse(['error' => $e->getMessage()], 500);
+        } catch (\Throwable $e) {
+             return new JsonResponse([
+                'error' => $e->getMessage(),
+                'file'  => $e->getFile(),
+                'line'  => $e->getLine()
+             ], 500);
         }
     }
 
