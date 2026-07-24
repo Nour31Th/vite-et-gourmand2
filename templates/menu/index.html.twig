@@ -92,8 +92,8 @@ variables: menus->tableau Menu[] pr affichage de base, thème-> tableau string p
             {% for menu in menus %}
                 <article class="menu-card">
                     {#image menu, affichage 1ère photo sinon affiche image par défaut#}
-                    {% if menu.images is not empty and menu.images.first is not null %}
-                       <img src="{{ asset('images/menus/' ~ menu.images.first.url) }}"
+                    {% if menu.imageMenus is not empty and menu.imageMenus.first is not null %}
+                       <img src="{{ asset('images/menus/' ~ menu.imageMenus.first.url) }}"
                          alt="{{ menu.titre }}"
                          loading="lazy">
                     {% else %}
