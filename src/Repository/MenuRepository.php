@@ -24,8 +24,9 @@ class MenuRepository extends ServiceEntityRepository
         ?int $nbPersonnes = null    /*filtre nb personnes*/
     ): array {
         $qb = $this->createQueryBuilder('m')               /*QueryBuilder --> construit requête SQL orientée objet et 'm' --> alias entité Menu */
-            ->where('m.actif = true')        // -->uniquement menus actifs
-            ->orderBy('m.titre', 'ASC');    //-->tri alphabétique
+            ->where('m.actif = :actif')        // -->uniquement menus actifs
+            ->orderBy('m.titre', 'ASC')    //-->tri alphabétique
+            ->setParameter('actif', true)
 
         // conditions filtres
         // ajout filtre que si valeur non nulle et non vide
@@ -58,8 +59,9 @@ class MenuRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('m')
             ->select('DISTINCT m.theme') // DISTINCT évite les doublons
-            ->where('m.actif = true')
+            ->where('m.actif = :actif')
             ->orderBy('m.theme', 'ASC')
+            ->setParameter('actif', true)
             ->getQuery()
             ->getSingleColumnResult(); // retourne un tableau de valeurs simples
     }
@@ -69,8 +71,9 @@ class MenuRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('m')
             ->select('DISTINCT m.regime')
-            ->where('m.actif = true')
+            ->where('m.actif = :actif')
             ->orderBy('m.regime', 'ASC')
+            ->setParameter('actif', true)
             ->getQuery()
             ->getSingleColumnResult();
     }
