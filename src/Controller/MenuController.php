@@ -49,8 +49,8 @@ class MenuController extends AbstractController
                    'regime'          => $menu->getRegime(),
                    'prix'            => (float) $menu->getPrix(),
                    'nb_personnes_min' => (int) $menu->getNbPersonnesMin(),
-                   'image_url'       => ! $menu->getImagesMenus()->isEmpty()                                   // 1ère image menu pr card
-                                     ? '/images/menus/' . $menu->getImagesMenus()->first()->getUrl()    // ?-> opérateur nullsafe pr éviter erreur si 0 image
+                   'image_url'       => ! $menu->getImageMenus()->isEmpty()                                   // 1ère image menu pr card
+                                     ? '/images/menus/' . $menu->getImageMenus()->first()->getUrl()    // ?-> opérateur nullsafe pr éviter erreur si 0 image
                                      : '/images/default-menu.png',
                  ];
              }
